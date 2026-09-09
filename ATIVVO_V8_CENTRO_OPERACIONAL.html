@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d100f">
+<title>ATIVVO — Seu negócio sempre em movimento.</title>
+<style>
+:root{--bg:#0d100f;--panel:#151a18;--panel2:#1b211f;--line:#29312e;--text:#f4f7f5;--muted:#8e9994;--lime:#b8ff3d;--danger:#ff6b6b;--warn:#ffc857;--ok:#67e8a5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:760px;margin:auto;min-height:100vh;padding-bottom:90px}
+.top{padding:20px 18px 10px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:linear-gradient(var(--bg) 80%,transparent);z-index:5}
+.brand{display:flex;gap:10px;align-items:center}.mark{width:36px;height:36px;border-radius:12px;background:var(--lime);color:#101312;display:grid;place-items:center;font-weight:900}.brand b{font-size:20px}.brand small{display:block;color:var(--muted);font-size:11px}
+.icon{width:40px;height:40px;border-radius:13px;border:1px solid var(--line);background:var(--panel);color:var(--text)}
+.view{padding:10px 16px}.hero{display:flex;justify-content:space-between;align-items:end;margin:10px 2px 18px}.hero h1{font-size:28px;margin:0 0 5px}.hero p{margin:0;color:var(--muted)}.date{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px}.stat b{font-size:25px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.section{margin-top:20px}.sectionhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sectionhead h2{font-size:16px;margin:0}.link{border:0;background:none;color:var(--lime);font-size:12px}
+.item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.item:last-child{border-bottom:0}.time{min-width:54px;color:var(--lime);font-weight:700;font-size:13px}.main{flex:1}.main b{display:block;font-size:14px}.main span{color:var(--muted);font-size:12px}
+.pill{font-size:10px;border-radius:999px;padding:5px 8px;background:var(--panel2);color:var(--muted)}.danger{color:var(--danger)}.ok{color:var(--ok)}
+.empty{text-align:center;color:var(--muted);padding:22px}.op{border-left:3px solid var(--lime);padding-left:12px}
+.search{width:100%;padding:12px 14px;border-radius:14px;background:var(--panel);border:1px solid var(--line);color:var(--text);outline:0}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:12px;border-radius:13px}.primary{background:var(--lime);color:#101312;border-color:var(--lime);font-weight:800}
+.fab{position:fixed;right:20px;bottom:78px;width:56px;height:56px;border:0;border-radius:18px;background:var(--lime);color:#101312;font-size:30px;z-index:8}.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(760px,100%);height:72px;background:#111614ee;backdrop-filter:blur(16px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);z-index:7}
+.nav button{border:0;background:none;color:var(--muted);font-size:10px;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}.nav button.active{color:var(--lime)}.nav i{font-style:normal;font-size:19px}
+.modal{position:fixed;inset:0;background:#0009;display:none;align-items:end;z-index:20}.modal.open{display:flex}.sheet{width:min(760px,100%);margin:auto;background:var(--panel);border:1px solid var(--line);border-radius:24px 24px 0 0;padding:20px;max-height:88vh;overflow:auto}.sheet h2{margin:0 0 16px}.field{margin:11px 0}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:11px;border-radius:12px;background:var(--bg);border:1px solid var(--line);color:var(--text)}.actions{display:flex;gap:10px;margin-top:18px}.actions>*{flex:1}.toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);background:#eaf8df;color:#101312;padding:11px 15px;border-radius:12px;font-size:12px;opacity:0;transition:.2s;z-index:30}.toast.show{opacity:1;transform:translate(-50%,0)}
+.badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--lime);color:#101312;font-size:10px;font-weight:900;display:grid;place-items:center}.iconwrap{position:relative}.toggle{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}.toggle input{accent-color:var(--lime);width:19px;height:19px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="brand"><div class="mark">A</div><div><b>ATIVVO</b><small>Seu negócio sempre em movimento.</small></div></div><div style="display:flex;gap:8px"><div class="iconwrap"><button class="icon" onclick="alerts()">◉</button><span id="badge" class="badge" style="display:none">0</span></div><button class="icon" onclick="settings()">⚙</button></div></header>
+<main id="view" class="view"></main>
+<button class="fab" onclick="quick()">+</button>
+<nav class="nav">
+<button data-t="today" onclick="go('today')"><i>⌂</i>Hoje</button>
+<button data-t="agenda" onclick="go('agenda')"><i>◷</i>Agenda</button>
+<button data-t="clients" onclick="go('clients')"><i>♙</i>Clientes</button>
+<button data-t="insights" onclick="go('insights')"><i>⌁</i>Insights</button>
+<button data-t="more" onclick="go('more')"><i>•••</i>Mais</button>
+</nav></div>
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="sheet" id="sheet"></div></div><div id="toast" class="toast"></div>
+<script>
+const K='ativvo-core-v1';
+let S=JSON.parse(localStorage.getItem(K)||'null')||{
+ clients:[{id:1,name:'Ana Souza',phone:'',birth:'1992-09-08',notes:'Prefere fim da tarde.'},{id:2,name:'Carlos Lima',phone:'',birth:'1988-11-20',notes:''}],
+ appointments:[{id:1,clientId:1,service:'Atendimento',date:new Date().toISOString().slice(0,10),time:'16:00',duration:60,value:150,status:'agendado'}],
+ returns:[],tasks:[],services:[{name:'Atendimento',duration:60,price:150}],
+ notifications:{near:true,return:true,birthday:true,cancel:true,opportunity:true},learn:false
+};
+let tab='today'; S.plan=S.plan||'PREMIUM'; S.finance=S.finance||{transactions:[]}; const save=()=>localStorage.setItem(K,JSON.stringify(S));
+const esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
+const minutesUntil=(date,time)=>{const [y,m,day]=date.split('-').map(Number),[h,mi]=(time||'00:00').split(':').map(Number),t=new Date(y,m-1,day,h,mi,0,0);return (t-new Date())/60000};
+const birthdayOffset=(birth,target)=>{if(!birth)return null;const [y,m,d]=birth.split('-').map(Number);const t=new Date(target+'T12:00:00');let b=new Date(t.getFullYear(),m-1,d,12);if(b<t)b=new Date(t.getFullYear()+1,m-1,d,12);return Math.round((b-t)/86400000)};
+const C=id=>S.clients.find(x=>x.id==id);
+const dateBR=d=>new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+function go(t){tab=t;render()}
+function render(){
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.t===tab));
+ ({today:todayView,agenda:agendaView,clients:clientsView,insights:insightsView,more:moreView}[tab]||todayView)();
+}
+function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function finance(){
+ if(!S.finance)S.finance={transactions:[{id:1,type:'receita',description:'Atendimento Ana Souza',value:150,date:today(),category:'Atendimento'},{id:2,type:'despesa',description:'Material operacional',value:40,date:today(),category:'Operação'}]};
+ const d=today(), t=S.finance.transactions||[];
+ const rec=t.filter(x=>x.type==='receita'&&x.date===d).reduce((n,x)=>n+Number(x.value||0),0);
+ const exp=t.filter(x=>x.type==='despesa'&&x.date===d).reduce((n,x)=>n+Number(x.value||0),0);
+ return {rec,exp,profit:rec-exp,count:S.appointments.filter(x=>x.date===d&&x.status==='concluído').length};
+}
+function todayView(){
+ const d=today(), a=S.appointments.filter(x=>x.date===d&&x.status!=='cancelado'), b=S.clients.filter(x=>x.birth?.slice(5)===d.slice(5)), f=finance();
+ const pending=S.tasks.filter(x=>!x.done).length;
+ const returns=S.returns.filter(x=>x.date===d).length;
+ view.innerHTML=`<div class="hero"><div><h1>Hoje</h1><p>Seu negócio, no controle.</p></div><div class="date">${new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'})}</div></div>
+ <div class="grid"><div class="card stat"><b>${a.length}</b><span>atendimentos hoje</span></div><div class="card stat"><b>${pending}</b><span>pendências</span></div><div class="card stat"><b>${returns}</b><span>retornos hoje</span></div><div class="card stat"><b>${b.length}</b><span>aniversários hoje</span></div></div>
+ <section class="section"><div class="sectionhead"><h2>Ações rápidas</h2></div><div class="grid"><button class="btn primary" onclick="appointment()">+ Atendimento</button><button class="btn" onclick="newClient()">+ Cliente</button><button class="btn" onclick="ret()">+ Retorno</button><button class="btn" onclick="task()">+ Lembrete</button></div></section>
+ <section class="section"><div class="sectionhead"><h2>Agenda de hoje</h2><button class="link" onclick="go('agenda')">Ver agenda</button></div><div class="card">${a.length?a.sort((x,y)=>x.time.localeCompare(y.time)).map(app).join(''):'<div class="empty">Nenhum atendimento agendado para hoje.</div>'}</div></section>
+ <section class="section"><div class="sectionhead"><h2>O que merece sua atenção</h2><button class="link" onclick="alerts()">Ver tudo</button></div><div class="card">${eventSummary()}</div></section>
+ <section class="section"><div class="sectionhead"><h2>Clientes e relacionamento</h2><button class="link" onclick="go('clients')">Ver clientes</button></div><div class="card">${S.clients.slice(0,3).map(c=>{const next=S.appointments.filter(x=>x.clientId==c.id&&x.date>=d&&!['cancelado','no-show'].includes(x.status)).sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time))[0];return `<div class="item" onclick="clientView(${c.id})"><div class="main"><b>${esc(c.name)}</b><span>${next?`Próximo: ${dateBR(next.date)} · ${next.time}`:(c.birth?'Aniversário '+dateBR(c.birth):'Sem próximo atendimento')}</span></div><span class="pill">${next?'Ativo':'Atenção'}</span></div>`}).join('')||'<div class="empty">Nenhum cliente cadastrado.</div>'}</div></section>
+ <section class="section"><div class="sectionhead"><h2>Financeiro <span class="pill">PREMIUM</span></h2><button class="link" onclick="financeView()">Abrir</button></div><div class="card"><div class="grid"><div class="stat"><b>${money(f.rec)}</b><span>faturado hoje</span></div><div class="stat"><b>${money(f.exp)}</b><span>despesas hoje</span></div><div class="stat"><b>${money(f.profit)}</b><span>resultado</span></div><div class="stat"><b>${f.count}</b><span>concluídos</span></div></div><div class="op" style="margin-top:14px"><b>${f.profit>=0?'Resultado positivo hoje.':'Atenção ao resultado de hoje.'}</b><div style="color:var(--muted);font-size:12px;margin-top:5px">O financeiro acompanha os valores reais dos atendimentos e das despesas registradas.</div></div></div></section>`;
+}
+function app(a){return `<div class="item" onclick="appointment(${a.id})"><div class="time">${esc(a.time)}</div><div class="main"><b>${esc(C(a.clientId)?.name||'Cliente')}</b><span>${esc(a.service)} · ${a.duration} min · ${money(a.value)}</span></div><span class="pill">${esc(a.status)}</span></div>`}
+function agendaView(){
+ const a=S.appointments.slice().sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));
+ view.innerHTML=`<div class="hero"><div><h1>Agenda</h1><p>Organize sem complicar.</p></div></div><button class="btn primary" onclick="appointment()">+ Novo atendimento</button><section class="section"><div class="card">${a.length?a.map(x=>`<div class="item" onclick="appointment(${x.id})"><div class="time">${dateBR(x.date)}<br>${esc(x.time)}</div><div class="main"><b>${esc(C(x.clientId)?.name||'Cliente')}</b><span>${esc(x.service)} · ${x.duration} min</span></div><span class="pill">${esc(x.status)}</span></div>`).join(''):'<div class="empty">Agenda vazia.</div>'}</div></section>`;
+}
+function clientsView(){
+ view.innerHTML=`<div class="hero"><div><h1>Clientes</h1><p>Relacionamento e histórico.</p></div></div><input id="q" class="search" placeholder="Buscar por nome ou telefone" oninput="filterClients()"><section class="section"><div id="clist" class="card">${rows(S.clients)}</div></section>`;
+}
+function rows(a){return a.map(c=>`<div class="item" onclick="clientView(${c.id})"><div style="width:42px;height:42px;border-radius:14px;background:var(--panel2);display:grid;place-items:center;font-weight:800">${esc(c.name.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase())}</div><div class="main"><b>${esc(c.name)}</b><span>${c.birth?'Aniversário '+dateBR(c.birth):'Cliente ativo'}</span></div></div>`).join('')||'<div class="empty">Nenhum cliente encontrado.</div>'}
+function filterClients(){let q=document.getElementById('q').value.toLowerCase();document.getElementById('clist').innerHTML=rows(S.clients.filter(c=>(c.name+c.phone).toLowerCase().includes(q)))}
+function insightsView(){
+ let no=S.appointments.filter(x=>['cancelado','no-show'].includes(x.status)).length;
+ view.innerHTML=`<div class="hero"><div><h1>Insights</h1><p>Contexto para decidir melhor.</p></div></div><div class="card"><div class="op"><b>Oportunidade importante</b><div style="color:var(--muted);font-size:12px;margin-top:5px">${S.clients.length} cliente(s) na base. O próximo motor de inteligência vai detectar reativação, risco e recuperação de horários.</div></div></div>
+ <section class="section"><div class="card"><div class="item"><div class="main"><b>Cancelamentos / não comparecimentos</b><span>${no} registrado(s)</span></div><span class="pill ${no?'danger':'ok'}">${no?'Atenção':'Tudo certo'}</span></div></div></section>
+ <section class="section"><div class="sectionhead"><h2>Notificações essenciais</h2></div><div class="card">${notif('near','Atendimento próximo')}${notif('return','Retorno próximo')}${notif('birthday','Aniversário do cliente')}${notif('cancel','Cancelamento / não comparecimento')}${notif('opportunity','Oportunidade importante')}</div></section>`;
+}
+function notif(k,l){return `<label class="toggle"><span>${l}</span><input type="checkbox" ${S.notifications[k]?'checked':''} onchange="S.notifications['${k}']=this.checked;save()"></label>`}
+function financeView(){
+ const f=finance(), t=S.finance.transactions||[];
+ view.innerHTML=`<div class="hero"><div><h1>Financeiro</h1><p>Gestão financeira do seu negócio.</p></div><span class="pill">PREMIUM</span></div><div class="grid"><div class="card stat"><b>${money(f.rec)}</b><span>receitas hoje</span></div><div class="card stat"><b>${money(f.exp)}</b><span>despesas hoje</span></div><div class="card stat"><b>${money(f.profit)}</b><span>resultado hoje</span></div><div class="card stat"><b>${f.count}</b><span>atendimentos concluídos</span></div></div><section class="section"><div class="sectionhead"><h2>Lançamentos</h2><button class="link" onclick="transaction()">+ Lançamento</button></div><div class="card">${t.slice().sort((a,b)=>(b.date+a.id).localeCompare(a.date+b.id)).map(x=>`<div class="item"><div class="main"><b>${esc(x.description)}</b><span>${dateBR(x.date)} · ${esc(x.category||'Geral')}</span></div><span class="pill ${x.type==='despesa'?'danger':'ok'}">${x.type==='despesa'?'-':'+'}${money(x.value)}</span></div>`).join('')||'<div class="empty">Nenhum lançamento.</div>'}</div></section><section class="section"><div class="card op"><b>Insight financeiro</b><div style="color:var(--muted);font-size:12px;margin-top:5px">O ATIVVO pode cruzar faturamento, despesas, serviços, cancelamentos e horários para mostrar onde existe oportunidade de melhoria.</div></div></section>`;
+}
+function transaction(){modal(`<h2>Novo lançamento</h2><div class="field"><label>Tipo</label><select id="ft"><option value="receita">Receita</option><option value="despesa">Despesa</option></select></div>${field('Descrição','fd')}${field('Valor','fv','number')}${field('Data','fdate','date')}<div class="field"><label>Categoria</label><input id="fc" placeholder="Ex.: Atendimento, Operação"></div><div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveTransaction()">Salvar</button></div>`);fdate.value=today()}
+function saveTransaction(){if(!fd.value.trim()||!fv.value)return msg('Informe descrição e valor.');if(!S.finance)S.finance={transactions:[]};S.finance.transactions.push({id:Date.now(),type:ft.value,description:fd.value,value:+fv.value,date:fdate.value,category:fc.value});save();closeModal();render();msg('Lançamento salvo.')}
+function moreView(){
+ view.innerHTML=`<div class="hero"><div><h1>Mais</h1><p>Estrutura do seu ATIVVO.</p></div></div><div class="card"><div class="item" onclick="financeView()"><div class="main"><b>Financeiro</b><span>Receitas, despesas, resultado e indicadores.</span></div><span class="pill">PREMIUM</span></div><div class="item" onclick="service()"><div class="main"><b>Serviços</b><span>O profissional define o tempo necessário.</span></div><span>›</span></div><div class="item" onclick="settings()"><div class="main"><b>Preferências e notificações</b><span>Aprendizado controlado e alertas essenciais.</span></div><span>›</span></div><div class="item"><div class="main"><b>Plano</b><span>Estrutura preparada para NORMAL e PREMIUM.</span></div><span class="pill">${S.plan||'PREMIUM'}</span></div></div>`;
+}
+
+function eventEngine(){
+ const now=new Date(), d=today(), out=[];
+ const add=(type,title,detail,priority,action)=>out.push({type,title,detail,priority,action});
+ S.appointments.forEach(a=>{
+   if(a.status==='cancelado' && S.notifications.cancel) add('cancel','Atendimento cancelado',`${C(a.clientId)?.name||'Cliente'} · ${a.time}`,'high',`appointment(${a.id})`);
+   if(a.status==='no-show' && S.notifications.cancel) add('noshow','Não comparecimento',`${C(a.clientId)?.name||'Cliente'} · ${a.time}`,'high',`appointment(${a.id})`);
+   if(a.date===d && ['agendado','confirmado'].includes(a.status) && S.notifications.near){
+     const diff=minutesUntil(a.date,a.time);
+     if(diff>=0 && diff<=60) add('near','Atendimento próximo',`${C(a.clientId)?.name||'Cliente'} · ${a.time}`,'normal',`appointment(${a.id})`);
+   }
+ });
+ S.returns.forEach(r=>{
+   if(!S.notifications.return)return;
+   const diff=minutesUntil(r.date,r.time||'09:00');
+   const mode=r.reminder||'24h e 1h antes';
+   const hit=(mode.includes('24h')&&diff>=1439&&diff<=1441)||(mode.includes('1h')&&diff>=59&&diff<=61);
+   if(hit)add('return','Retorno próximo',`${C(r.clientId)?.name||'Cliente'} · ${dateBR(r.date)} ${r.time||''}`,'normal',`clientView(${r.clientId})`);
+ });
+ S.clients.forEach(c=>{
+   if(!S.notifications.birthday||!c.birth)return;
+   const off=birthdayOffset(c.birth,d);
+   if([0,1,7].includes(off)){
+     const label=off===0?'Aniversário hoje':off===1?'Aniversário amanhã':'Aniversário em 7 dias';
+     add('birthday','Aniversário do cliente',`${c.name} · ${label}`,'normal',`clientView(${c.id})`);
+   }
+ });
+ if(S.notifications.opportunity){
+   const completedByClient=new Map();
+   S.appointments.filter(a=>a.status==='concluído').forEach(a=>{
+     const prev=completedByClient.get(a.clientId);
+     if(!prev||a.date>prev.date)completedByClient.set(a.clientId,a);
+   });
+   completedByClient.forEach((a,cid)=>{
+     const days=Math.floor((new Date(d+'T12:00:00')-new Date(a.date+'T12:00:00'))/86400000);
+     if(days>=45 && !S.appointments.some(x=>x.clientId==cid && x.date>d && !['cancelado','no-show'].includes(x.status)))
+       add('opportunity','Cliente merece atenção',`${C(cid)?.name||'Cliente'} está há ${days} dias sem novo atendimento`,'high',`clientView(${cid})`);
+   });
+ }
+ const seen=new Set(); return out.filter(e=>{const k=e.type+'|'+e.detail;if(seen.has(k))return false;seen.add(k);return true});
+}
+function eventSummary(){
+ const e=eventEngine();
+ if(!e.length)return `<div class="op"><b>Operação em dia.</b><div style="color:var(--muted);font-size:12px;margin-top:5px">O ATIVVO continua observando silenciosamente e mostra algo quando realmente merece atenção.</div></div>`;
+ return e.slice(0,3).map(x=>`<div class="item" onclick="${x.action}"><div class="main"><b>${esc(x.title)}</b><span>${esc(x.detail)}</span></div><span class="pill ${x.priority==='high'?'danger':''}">${x.priority==='high'?'Importante':'Atenção'}</span></div>`).join('');
+}
+function alerts(){
+ const e=eventEngine();
+ modal(`<h2>Central de atenção</h2>${e.length?`<div class="card">${e.map(x=>`<div class="item" onclick="closeModal();${x.action}"><div class="main"><b>${esc(x.title)}</b><span>${esc(x.detail)}</span></div><span class="pill ${x.priority==='high'?'danger':''}">${x.priority==='high'?'Importante':'Atenção'}</span></div>`).join('')}</div>`:`<div class="empty">Nenhuma ação importante agora.</div>`}<div class="actions"><button class="btn" onclick="closeModal()">Fechar</button></div>`);
+}
+function refreshBadge(){const n=eventEngine().length,b=document.getElementById('badge');if(!b)return;b.textContent=n>9?'9+':n;b.style.display=n?'grid':'none'}
+function modal(h){sheet.innerHTML=h;document.getElementById('modal').classList.add('open')}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function msg(t){toast.textContent=t;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1700)}
+function quick(){modal(`<h2>O que você quer fazer?</h2><div class="grid"><button class="btn" onclick="closeModal();newClient()">+ Cliente</button><button class="btn" onclick="closeModal();appointment()">+ Atendimento</button><button class="btn" onclick="closeModal();ret()">+ Retorno</button><button class="btn" onclick="closeModal();task()">+ Lembrete</button></div>`)}
+function newClient(){modal(`<h2>Novo cliente</h2>${field('Nome','cn','text')}${field('Telefone','cp','text')}${field('Data de nascimento','cb','date')}${field('Observações','co','text')}<div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveClient()">Salvar</button></div>`)}
+function field(l,id,type='text'){return `<div class="field"><label>${l}</label><input id="${id}" type="${type}"></div>`}
+function saveClient(){let n=cn.value.trim();if(!n)return msg('Informe o nome.');S.clients.push({id:Date.now(),name:n,phone:cp.value,birth:cb.value,notes:co.value});save();closeModal();render();msg('Cliente salvo.')}
+function clientView(id){let c=C(id),h=S.appointments.filter(x=>x.clientId==id);modal(`<h2>${esc(c.name)}</h2><div class="card"><b>Telefone</b><div style="color:var(--muted);font-size:12px">${esc(c.phone||'Não informado')}</div><br><b>Aniversário</b><div style="color:var(--muted);font-size:12px">${c.birth?dateBR(c.birth):'Não informado'}</div><br><b>Observações</b><div style="color:var(--muted);font-size:12px">${esc(c.notes||'Nenhuma')}</div></div><section class="section"><h2>Histórico</h2><div class="card">${h.map(app).join('')||'<div class="empty">Sem atendimentos registrados.</div>'}</div></section><div class="actions"><button class="btn" onclick="closeModal()">Fechar</button><button class="btn primary" onclick="closeModal();appointment(null,${id})">Novo atendimento</button></div>`)}
+function appointment(id=null,forcedClient=null){let a=id?S.appointments.find(x=>x.id==id):null;modal(`<h2>${a?'Editar atendimento':'Novo atendimento'}</h2><div class="field"><label>Cliente</label><select id="ac">${S.clients.map(c=>`<option value="${c.id}" ${((a?.clientId||forcedClient)==c.id)?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div>${field('Serviço','as')}<div class="grid">${field('Data','ad','date')}${field('Hora','at','time')}</div><div class="grid">${field('Duração (min)','adu','number')}${field('Valor final','av','number')}</div><div class="field"><label>Status</label><select id="ast">${['agendado','confirmado','concluído','cancelado','no-show'].map(s=>`<option ${a?.status===s?'selected':''}>${s}</option>`).join('')}</select></div><div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveAppointment(${id||0})">Salvar</button></div>`);as.value=a?.service||S.services[0].name;ad.value=a?.date||today();at.value=a?.time||'09:00';adu.value=a?.duration||S.services[0].duration;av.value=a?.value||S.services[0].price}
+function saveAppointment(id){let x={id:id||Date.now(),clientId:+ac.value,service:as.value,date:ad.value,time:at.value,duration:+adu.value,value:+av.value,status:ast.value};S.appointments=id?S.appointments.map(a=>a.id==id?x:a):[...S.appointments,x];save();closeModal();render();msg('Atendimento salvo.')}
+function ret(){modal(`<h2>Novo retorno</h2><div class="field"><label>Cliente</label><select id="rc">${S.clients.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div><div class="grid">${field('Data','rd','date')}${field('Hora','rt','time')}</div><div class="field"><label>Lembrete</label><select id="rr"><option>24h e 1h antes</option><option>24h antes</option><option>1h antes</option><option>Sem lembrete</option></select></div><div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveReturn()">Salvar</button></div>`)}
+function saveReturn(){S.returns.push({id:Date.now(),clientId:+rc.value,date:rd.value,time:rt.value,reminder:rr.value});save();closeModal();render();msg('Retorno salvo.')}
+function task(){modal(`<h2>Novo lembrete</h2>${field('O que precisa ser feito?','tt')}${field('Data','td','date')}<div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveTask()">Salvar</button></div>`);td.value=today()}
+function saveTask(){if(!tt.value.trim())return msg('Informe o lembrete.');S.tasks.push({id:Date.now(),text:tt.value,date:td.value,done:false});save();closeModal();render();msg('Lembrete salvo.')}
+function service(){let s=S.services[0];modal(`<h2>Serviço</h2>${field('Nome','sn')}${field('Tempo necessário (min)','sd','number')}${field('Preço padrão','sp','number')}<p style="color:var(--muted);font-size:12px">O profissional define o tempo. O ATIVVO respeita essa definição e não altera automaticamente.</p><div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveService()">Salvar</button></div>`);sn.value=s.name;sd.value=s.duration;sp.value=s.price}
+function saveService(){S.services[0]={name:sn.value,duration:+sd.value,price:+sp.value};save();closeModal();render();msg('Serviço salvo.')}
+function settings(){modal(`<h2>Preferências</h2><div class="card"><label class="toggle"><span>Aprendizado de preferências</span><input type="checkbox" ${S.learn?'checked':''} onchange="S.learn=this.checked;save()"></label><p style="color:var(--muted);font-size:12px">O ATIVVO pode aprender preferências operacionais sem alterar decisões importantes sozinho.</p></div><section class="section"><h2>Notificações essenciais</h2><div class="card">${notif('near','Atendimento próximo')}${notif('return','Retorno próximo')}${notif('birthday','Aniversário do cliente')}${notif('cancel','Cancelamento / não comparecimento')}${notif('opportunity','Oportunidade importante')}</div></section><div class="actions"><button class="btn" onclick="closeModal()">Fechar</button></div>`)}
+render();setTimeout(refreshBadge,50);setInterval(()=>{refreshBadge();if(tab==='today')todayView()},30000);
+</script>
+</body>
+</html>
