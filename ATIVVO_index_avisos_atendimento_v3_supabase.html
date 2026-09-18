@@ -1,0 +1,2756 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ATIVVO — Seu negócio sempre em movimento</title>
+<meta name="theme-color" content="#0E1220">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root{
+  --bg:#0E1220;
+  --surface:#161B2E;
+  --surface-2:#1E2440;
+  --surface-3:#252C4C;
+  --border:#2A3152;
+  --text:#EDEFF7;
+  --muted:#8D94AF;
+  --primary:#2FD4B0;
+  --primary-dark:#1FA98A;
+  --primary-ink:#06251F;
+  --warn:#F5A623;
+  --danger:#FF6B6B;
+  --info:#5B8DEF;
+  --radius-s:10px;
+  --radius-m:16px;
+  --radius-l:22px;
+  --font-display:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:radial-gradient(1200px 800px at 80% -10%, #16203a 0%, var(--bg) 55%) fixed;
+  color:var(--text);
+  font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  overscroll-behavior-y:contain;
+}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+h1,h2,h3{font-family:var(--font-display);margin:0;letter-spacing:-0.01em;}
+a{color:inherit;}
+::selection{background:var(--primary);color:var(--primary-ink);}
+
+/* ---- App shell ---- */
+#clientAppRoot{
+  max-width:560px;
+  margin:0 auto;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  padding-bottom:88px;
+}
+.topbar{
+  position:sticky; top:0; z-index:20;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 20px 14px;
+  background:linear-gradient(180deg, rgba(14,18,32,.97) 70%, rgba(14,18,32,0));
+  backdrop-filter:blur(6px);
+}
+.topbar .brand{display:flex; align-items:center; gap:10px;}
+.brand .mark{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,var(--primary),var(--info));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display); font-weight:800; color:#06131f; font-size:15px;
+}
+.brand .tag{font-size:11px;color:var(--muted); margin-top:1px;}
+.brand h1{font-size:18px;}
+.iconbtn{
+  width:40px;height:40px;border-radius:12px;border:1px solid var(--border);
+  background:var(--surface); color:var(--text); display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.iconbtn .dot{
+  position:absolute; top:6px; right:6px; width:8px;height:8px;border-radius:50%;
+  background:var(--danger); border:2px solid var(--bg); display:none;
+}
+.iconbtn .dot.show{display:block;}
+
+main{flex:1; padding:4px 20px 24px;}
+.screen{display:none; animation:fade .18s ease;}
+.screen.active{display:block;}
+@keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+.section-title{
+  display:flex; align-items:center; justify-content:space-between;
+  margin:22px 0 10px;
+}
+.section-title h2{font-size:15px; color:var(--text);}
+.section-title .link{font-size:12.5px; color:var(--primary); font-weight:600; border:none; background:none; padding:0;}
+.section-title .count{font-size:12px; color:var(--muted); font-weight:500;}
+
+.date-line{color:var(--muted); font-size:13px; margin-top:-4px;}
+
+/* cards */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-m);
+  padding:14px;
+}
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.stat-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m);
+  padding:14px 12px;
+}
+.stat-card .num{font-family:var(--font-display); font-size:26px; font-weight:700;}
+.stat-card .lbl{font-size:11.5px; color:var(--muted); margin-top:2px;}
+.stat-card.accent{border-color:rgba(47,212,176,.35); background:linear-gradient(180deg, rgba(47,212,176,.10), rgba(47,212,176,.02));}
+.stat-card.warn{border-color:rgba(245,166,35,.35); background:linear-gradient(180deg, rgba(245,166,35,.10), rgba(245,166,35,.02));}
+
+.quick-actions{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; margin-top:12px;}
+.quick-actions button{
+  flex:0 0 auto; display:flex; align-items:center; gap:6px;
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  padding:10px 14px; border-radius:999px; font-size:13px; font-weight:600; white-space:nowrap;
+}
+.quick-actions button svg{width:15px;height:15px;}
+.quick-actions button:active{transform:scale(.97);}
+
+.list{display:flex; flex-direction:column; gap:10px; margin-top:2px;}
+.item{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m);
+  padding:13px 14px; display:flex; flex-direction:column; gap:8px;
+}
+.item .row1{display:flex; align-items:flex-start; justify-content:space-between; gap:10px;}
+.item .who{font-weight:700; font-size:14.5px;}
+.item .meta{font-size:12.5px; color:var(--muted); margin-top:2px;}
+.badge{
+  font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; white-space:nowrap;
+  border:1px solid transparent;
+}
+.badge.agendado{background:rgba(91,141,239,.15); color:#8fb0f5; border-color:rgba(91,141,239,.3);}
+.badge.confirmado{background:rgba(47,212,176,.15); color:var(--primary); border-color:rgba(47,212,176,.3);}
+.badge.concluido{background:rgba(255,255,255,.08); color:#c7cbdb; border-color:var(--border);}
+.badge.cancelado{background:rgba(255,107,107,.14); color:var(--danger); border-color:rgba(255,107,107,.3);}
+.badge.noshow{background:rgba(245,166,35,.15); color:var(--warn); border-color:rgba(245,166,35,.3);}
+
+.item .actions{display:flex; gap:6px; flex-wrap:wrap;}
+.item .actions button{
+  font-size:12px; font-weight:600; padding:7px 10px; border-radius:9px;
+  border:1px solid var(--border); background:var(--surface-2); color:var(--text);
+}
+.item .actions button.primary{background:var(--primary); border-color:var(--primary); color:var(--primary-ink);}
+.item .actions button.danger{background:rgba(255,107,107,.12); border-color:rgba(255,107,107,.3); color:var(--danger);}
+
+.empty{
+  text-align:center; padding:34px 16px; color:var(--muted); font-size:13.5px;
+  border:1px dashed var(--border); border-radius:var(--radius-m);
+}
+.empty b{display:block; color:var(--text); font-size:14.5px; margin-bottom:4px; font-family:var(--font-display);}
+
+.opportunity{
+  background:linear-gradient(180deg, rgba(245,166,35,.08), transparent);
+  border:1px solid rgba(245,166,35,.25);
+}
+.opportunity .who{color:var(--warn);}
+.attention-item{border-color:rgba(255,107,107,.28); background:linear-gradient(180deg, rgba(255,107,107,.07), transparent);}
+
+/* search */
+.search-wrap{position:relative; margin-top:4px;}
+.search-wrap input{
+  width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text);
+  padding:12px 14px 12px 40px; border-radius:var(--radius-m); font-size:14px;
+}
+.search-wrap svg{position:absolute; left:13px; top:50%; transform:translateY(-50%); width:16px;height:16px; color:var(--muted);}
+
+.tabs{display:flex; gap:8px; margin-top:12px; overflow-x:auto;}
+.tabs button{
+  flex:0 0 auto; padding:8px 13px; border-radius:999px; border:1px solid var(--border);
+  background:var(--surface); color:var(--muted); font-size:12.5px; font-weight:600;
+}
+.tabs button.active{background:var(--primary); border-color:var(--primary); color:var(--primary-ink);}
+
+/* forms */
+.field{margin-bottom:14px;}
+.field label{display:block; font-size:12.5px; color:var(--muted); margin-bottom:6px; font-weight:600;}
+.field input, .field select, .field textarea{
+  width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  padding:12px 13px; border-radius:var(--radius-s); font-size:14.5px; outline:none;
+}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--primary);}
+.field textarea{resize:vertical; min-height:64px;}
+.field-row{display:flex; gap:10px;}
+.field-row .field{flex:1;}
+.hint{font-size:11.5px; color:var(--muted); margin-top:5px;}
+.radio-group{display:flex; gap:8px; flex-wrap:wrap;}
+.radio-chip{
+  padding:9px 12px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2);
+  font-size:12.5px; color:var(--muted); font-weight:600;
+}
+.radio-chip.active{background:var(--primary); border-color:var(--primary); color:var(--primary-ink);}
+
+.btn{
+  width:100%; padding:14px; border-radius:var(--radius-m); border:none; font-weight:700; font-size:14.5px;
+  background:var(--primary); color:var(--primary-ink);
+}
+.btn:active{transform:scale(.985);}
+.btn.secondary{background:var(--surface-2); color:var(--text); border:1px solid var(--border);}
+.btn.danger{background:rgba(255,107,107,.14); color:var(--danger); border:1px solid rgba(255,107,107,.3);}
+.btn:disabled{opacity:.55;}
+.btn-row{display:flex; gap:10px; margin-top:6px;}
+.btn-row .btn{flex:1;}
+
+/* toggle */
+.toggle-row{display:flex; align-items:center; justify-content:space-between; padding:14px 2px; border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-row .t-label{font-size:14px; font-weight:600;}
+.toggle-row .t-sub{font-size:12px; color:var(--muted); margin-top:2px;}
+.switch{width:44px; height:26px; border-radius:999px; background:var(--surface-3); border:1px solid var(--border); position:relative; flex:0 0 auto;}
+.switch.on{background:var(--primary); border-color:var(--primary);}
+.switch .knob{position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; transition:left .15s ease;}
+.switch.on .knob{left:20px;}
+
+/* menu list (Mais) */
+.menu-list{display:flex; flex-direction:column; gap:8px; margin-top:4px;}
+.menu-item{
+  display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-m); padding:14px; text-align:left;
+}
+.menu-item .ic{width:38px; height:38px; border-radius:11px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; flex:0 0 auto;}
+.menu-item .txt{flex:1;}
+.menu-item .txt .t1{font-weight:700; font-size:14.5px;}
+.menu-item .txt .t2{font-size:12px; color:var(--muted); margin-top:1px;}
+.menu-item svg.chev{color:var(--muted); width:16px;height:16px;}
+
+.subheader{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+.backbtn{width:36px;height:36px;border-radius:10px;background:var(--surface); border:1px solid var(--border); color:var(--text); display:flex;align-items:center;justify-content:center;}
+
+/* bottom nav */
+.bottomnav{
+  position:fixed; bottom:0; left:0; right:0; z-index:30;
+  display:flex; justify-content:center;
+}
+.bottomnav-inner{
+  width:100%; max-width:560px; display:flex; align-items:center;
+  background:rgba(22,27,46,.92); backdrop-filter:blur(10px);
+  border-top:1px solid var(--border);
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  gap:2px;
+}
+.navbtn{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  background:none; border:none; color:var(--muted); padding:6px 2px; border-radius:12px; font-size:10.5px; font-weight:600;
+}
+.navbtn.active{color:var(--primary);}
+.navbtn svg{width:21px; height:21px;}
+.fab{
+  width:52px; height:52px; border-radius:16px; background:var(--primary); color:var(--primary-ink);
+  display:flex; align-items:center; justify-content:center; flex:0 0 auto; margin:0 2px;
+  box-shadow:0 8px 20px rgba(47,212,176,.35); border:none;
+}
+.fab svg{width:24px;height:24px;}
+
+/* modal */
+.overlay{
+  position:fixed; inset:0; background:rgba(6,8,16,.6); z-index:50;
+  display:none; align-items:flex-end; justify-content:center;
+}
+.overlay.open{display:flex;}
+.modal{
+  width:100%; max-width:560px; max-height:88vh; overflow-y:auto;
+  background:var(--surface); border-radius:22px 22px 0 0; border:1px solid var(--border); border-bottom:none;
+  padding:18px 20px calc(20px + env(safe-area-inset-bottom));
+  animation:slideup .2s ease;
+}
+@keyframes slideup{from{transform:translateY(24px); opacity:.6;} to{transform:translateY(0); opacity:1;}}
+.modal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+.modal-head h3{font-size:17px;}
+.modal-close{width:32px;height:32px;border-radius:10px;background:var(--surface-2); border:1px solid var(--border); color:var(--muted); display:flex;align-items:center;justify-content:center;}
+
+.toast-wrap{position:fixed; top:14px; left:0; right:0; display:flex; justify-content:center; z-index:80; pointer-events:none;}
+.toast{
+  background:var(--surface-3); border:1px solid var(--border); color:var(--text); padding:10px 16px;
+  border-radius:999px; font-size:13px; font-weight:600; box-shadow:0 10px 24px rgba(0,0,0,.35);
+  opacity:0; transform:translateY(-8px); transition:all .2s ease;
+}
+.toast.show{opacity:1; transform:translateY(0);}
+
+.notif-panel{
+  position:fixed; top:0; right:0; bottom:0; width:min(340px,86vw); background:var(--surface); z-index:60;
+  border-left:1px solid var(--border); transform:translateX(100%); transition:transform .2s ease; padding:18px; overflow-y:auto;
+}
+.notif-panel.open{transform:translateX(0);}
+.notif-scrim{position:fixed; inset:0; background:rgba(6,8,16,.5); z-index:55; display:none;}
+.notif-scrim.open{display:block;}
+
+.plan-pill{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; padding:5px 10px; border-radius:999px; background:var(--surface-2); border:1px solid var(--border); color:var(--muted); margin-top:2px;}
+.plan-pill.premium{background:rgba(47,212,176,.14); color:var(--primary); border-color:rgba(47,212,176,.3);}
+
+.locked{text-align:center; padding:40px 18px; border:1px dashed var(--border); border-radius:var(--radius-m); color:var(--muted); font-size:13.5px;}
+.locked b{display:block; color:var(--text); font-family:var(--font-display); font-size:15px; margin-bottom:6px;}
+
+@media (min-width:560px){
+  #clientAppRoot{border-left:1px solid var(--border); border-right:1px solid var(--border);}
+}
+
+/* ---- Access gate & Admin panel ---- */
+.gate-screen{
+  min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+}
+.gate-card{width:100%; max-width:400px;}
+.gate-card .mark-lg{
+  width:52px; height:52px; border-radius:14px; margin:0 auto 14px;
+  background:linear-gradient(135deg,var(--primary),var(--info));
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; color:#06131f; font-size:22px;
+}
+.gate-card h2{text-align:center; font-size:19px;}
+.gate-card .sub{text-align:center; color:var(--muted); font-size:13px; margin:6px 0 20px;}
+.gate-msg{padding:12px 14px; border-radius:12px; font-size:13px; margin-bottom:14px; border:1px solid var(--border);}
+.gate-msg.error{background:rgba(255,107,107,.1); border-color:rgba(255,107,107,.3); color:var(--danger);}
+.gate-msg.warn{background:rgba(245,166,35,.1); border-color:rgba(245,166,35,.3); color:var(--warn);}
+.gate-footer{text-align:center; margin-top:18px; font-size:12px; color:var(--muted);}
+.gate-footer button{background:none; border:none; color:var(--primary); font-weight:600; font-size:12px;}
+.disclosure{font-size:11.5px; color:var(--muted); line-height:1.5; margin-top:16px; padding-top:14px; border-top:1px solid var(--border);}
+
+#adminRoot{max-width:900px; margin:0 auto; padding:0 0 60px;}
+.admin-topbar{
+  position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px; background:rgba(14,18,32,.97); backdrop-filter:blur(6px); border-bottom:1px solid var(--border);
+}
+.admin-topbar .brand h1{font-size:16px;}
+.admin-topbar .brand .tag{color:var(--warn); font-weight:700;}
+.admin-main{padding:16px 20px 40px;}
+.admin-tabs{display:flex; gap:8px; margin-bottom:18px; overflow-x:auto;}
+.admin-tabs button{
+  flex:0 0 auto; padding:9px 14px; border-radius:999px; border:1px solid var(--border);
+  background:var(--surface); color:var(--muted); font-size:13px; font-weight:700;
+}
+.admin-tabs button.active{background:var(--warn); border-color:var(--warn); color:#251900;}
+.kpi-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:18px;}
+@media (min-width:520px){.kpi-grid{grid-template-columns:repeat(4,1fr);}}
+.table-list{display:flex; flex-direction:column; gap:10px;}
+.trow{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m); padding:13px 14px;
+}
+.trow .row1{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+.trow .name{font-weight:700; font-size:14.5px;}
+.trow .sub{font-size:12px; color:var(--muted); margin-top:2px;}
+.status-pill{font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; white-space:nowrap;}
+.status-pill.ativo{background:rgba(47,212,176,.15); color:var(--primary);}
+.status-pill.bloqueado{background:rgba(255,107,107,.14); color:var(--danger);}
+.status-pill.gratuito{background:rgba(91,141,239,.15); color:#8fb0f5;}
+.status-pill.pago{background:rgba(245,166,35,.15); color:var(--warn);}
+</style>
+</head>
+<body>
+
+<div id="clientAppRoot">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">A</div>
+      <div>
+        <h1>ATIVVO</h1>
+        <div class="tag">Seu negócio sempre em movimento</div>
+      </div>
+    </div>
+    <button class="iconbtn" onclick="Notif.open()" aria-label="Notificações">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="dot" id="notifDot"></span>
+    </button>
+  </header>
+
+  <main>
+    <!-- HOJE -->
+    <section class="screen" id="screen-hoje"></section>
+    <!-- AGENDA -->
+    <section class="screen" id="screen-agenda"></section>
+    <!-- CLIENTES -->
+    <section class="screen" id="screen-clientes"></section>
+    <!-- INSIGHTS -->
+    <section class="screen" id="screen-insights"></section>
+    <!-- MAIS -->
+    <section class="screen" id="screen-mais"></section>
+  </main>
+</div>
+
+<nav class="bottomnav" id="bottomNav">
+  <div class="bottomnav-inner">
+    <button class="navbtn" data-nav="hoje" onclick="Nav.go('hoje')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      <span>Hoje</span>
+    </button>
+    <button class="navbtn" data-nav="agenda" onclick="Nav.go('agenda')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+      <span>Agenda</span>
+    </button>
+    <button class="fab" onclick="Modals.openQuickAdd()" aria-label="Ação rápida">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <button class="navbtn" data-nav="clientes" onclick="Nav.go('clientes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      <span>Clientes</span>
+    </button>
+    <button class="navbtn" data-nav="insights" onclick="Nav.go('insights')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V9M12 19V5M20 19v-7"/></svg>
+      <span>Insights</span>
+    </button>
+    <button class="navbtn" data-nav="mais" onclick="Nav.go('mais')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+      <span>Mais</span>
+    </button>
+  </div>
+</nav>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)Modals.close()">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<div class="notif-scrim" id="notifScrim" onclick="Notif.close()"></div>
+<div class="notif-panel" id="notifPanel"></div>
+
+<div class="toast-wrap"><div class="toast" id="toast"></div></div>
+
+<div id="accessGateRoot" style="display:none;"></div>
+<div id="adminRoot" style="display:none;"></div>
+
+<script>
+/* =========================================================================
+   ATIVVO — index.html único, estático, mobile-first, pronto p/ GitHub Pages
+   Módulos: Utils, Storage, State, Repo, EventEngine, Render, Modals, Notif, Nav
+   ========================================================================= */
+
+/* ---------------------------- UTILS ---------------------------- */
+const Utils = {
+  uid(prefix){ return (prefix||'id') + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); },
+  todayISO(){ return new Date().toISOString().slice(0,10); },
+  esc(str){
+    if(str===undefined||str===null) return '';
+    return String(str).replace(/[&<>"']/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  },
+  money(v){
+    v = Number(v)||0;
+    return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+  },
+  dateBR(iso){
+    if(!iso) return '—';
+    const [y,m,d] = iso.split('-');
+    return `${d}/${m}/${y}`;
+  },
+  weekdayShort(iso){
+    const d = new Date(iso+'T00:00:00');
+    return ['dom','seg','ter','qua','qui','sex','sáb'][d.getDay()];
+  },
+  daysBetween(isoA, isoB){
+    const a = new Date(isoA+'T00:00:00'), b = new Date(isoB+'T00:00:00');
+    return Math.round((b-a) / 86400000);
+  },
+  addMinutes(time, mins){
+    const [h,m] = time.split(':').map(Number);
+    const total = h*60+m+Number(mins||0);
+    const hh = String(Math.floor((total/60)%24)).padStart(2,'0');
+    const mm = String(total%60).padStart(2,'0');
+    return `${hh}:${mm}`;
+  },
+  isBirthdayToday(iso){
+    if(!iso) return false;
+    const today = new Date();
+    const b = new Date(iso+'T00:00:00');
+    return b.getDate()===today.getDate() && b.getMonth()===today.getMonth();
+  },
+  debounce(fn, ms){
+    let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); };
+  },
+  monthKey(iso){ return (iso||'').slice(0,7); }
+};
+
+/* ---------------------------- CONFIGURAÇÃO DO SUPABASE ----------------------------
+   PENDENTE DE CONFIGURAÇÃO: troque os dois valores abaixo pelos do seu projeto
+   (Supabase Dashboard > Project Settings > API). A anonKey é pública por design
+   do Supabase — a segurança real vem das políticas de RLS no banco (schema.sql),
+   não do sigilo dessa chave. NUNCA coloque aqui a "service_role key". */
+const SUPABASE_CONFIG = {
+  url: 'https://pnkzopsodelnqflejrtv.supabase.co',
+  anonKey: 'sb_publishable_S6RsnLSnkdv7AdzKSpuhag_VMLp7kyD'
+};
+function isSupabaseConfigured(){
+  return !SUPABASE_CONFIG.url.includes('SEU-PROJETO') && !SUPABASE_CONFIG.anonKey.includes('SUA-CHAVE');
+}
+const sb = isSupabaseConfigured()
+  ? supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey)
+  : null;
+
+/* ---------------------------- STORAGE LAYER ----------------------------
+   Antes: dados só em localStorage. Agora: localStorage guarda somente uma
+   CÓPIA-CACHE local (para abrir a tela rápido e evitar tela em branco caso
+   a rede caia por um instante) — a fonte de verdade é o Postgres/Supabase.
+   Nenhuma decisão de acesso é tomada a partir deste cache: ele é só uma
+   otimização de exibição. */
+const Storage = {
+  KEY: 'ativvo_cache_v2',
+  get(){
+    try{
+      const raw = localStorage.getItem(this.KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ console.error('Storage.get falhou', e); return null; }
+  },
+  set(data){
+    try{ localStorage.setItem(this.KEY, JSON.stringify(data)); return true; }
+    catch(e){ console.error('Storage.set falhou (cache local apenas)', e); return false; }
+  }
+};
+
+/* ---------------------------- STATE ----------------------------
+   Mesmo formato de sempre (camelCase) para não quebrar Render/Modals/
+   EventEngine. Agora é hidratado a partir do Supabase em DataSync.hydrate()
+   e mantido sincronizado por Realtime — ver módulo DataSync mais abaixo. */
+const State = {
+  data: null,
+  emptyData(){
+    return {
+      clients: [], services: [], appointments: [], returns: [], transactions: [],
+      dismissed: [],
+      settings: { defaultReminder:'24h', notifAttention:true, notifOpportunities:true, notifAppointment:true, appointmentReminders:[] }
+    };
+  },
+  loadCacheOnly(){
+    // usado só para exibir algo instantaneamente antes da rede responder
+    this.data = Object.assign(this.emptyData(), Storage.get() || {});
+    if(!Array.isArray(this.data.settings.appointmentReminders)) this.data.settings.appointmentReminders = [];
+  },
+  saveCache(){
+    Storage.set(this.data);
+  },
+  clearCache(){
+    localStorage.removeItem(Storage.KEY);
+  }
+};
+
+/* ---------------------------- MAPEADORES DB (snake_case) <-> APP (camelCase) ----
+   Isolam o formato das tabelas Postgres do resto do app, que continua
+   trabalhando exatamente como antes (a.clientId, a.serviceId, etc.). */
+const Mapper = {
+  client:  { in:r=>({id:r.id, name:r.name, phone:r.phone||'', birthday:r.birthday||'', notes:r.notes||'', createdAt:(r.created_at||'').slice(0,10)}),
+             out:c=>({name:c.name, phone:c.phone, birthday:c.birthday||null, notes:c.notes}) },
+  service: { in:r=>({id:r.id, name:r.name, duration:r.duration, price:Number(r.price)}),
+             out:s=>({name:s.name, duration:Number(s.duration), price:Number(s.price)}) },
+  appointment: { in:r=>({id:r.id, clientId:r.client_id, serviceId:r.service_id||'', date:r.date, time:r.time,
+             duration:r.duration, price:Number(r.price), status:r.status, notes:r.notes||'', createdAt:(r.created_at||'').slice(0,10)}),
+             out:a=>({client_id:a.clientId, service_id:a.serviceId||null, date:a.date, time:a.time,
+             duration:Number(a.duration), price:Number(a.price), notes:a.notes||''}) },
+  ret: { in:r=>({id:r.id, clientId:r.client_id, date:r.date, time:r.time||'', reason:r.reason||'', reminder:r.reminder, done:r.done, createdAt:(r.created_at||'').slice(0,10)}),
+             out:r=>({client_id:r.clientId, date:r.date, time:r.time||'', reason:r.reason||'', reminder:r.reminder||'none'}) },
+  tx: { in:r=>({id:r.id, type:r.type, description:r.description||'', value:Number(r.value), date:r.date, category:r.category||'Geral'}),
+             out:t=>({type:t.type, description:t.description||'', value:Number(t.value), date:t.date, category:t.category||'Geral'}) }
+};
+
+/* ---------------------------- REPO (CRUD por domínio, agora via Supabase) ----------
+   Mesmos nomes de método de antes; agora são assíncronos (Promises) e
+   escrevem direto no Postgres. RLS garante que cada usuário só enxerga e
+   altera seus próprios registros — não há filtro manual de user_id aqui
+   além do necessário para o INSERT (o Postgres recusa qualquer tentativa
+   de gravar em nome de outro usuário). Em caso de falha de rede/servidor,
+   a função lança erro e mostra um aviso — nada é perdido nem aplicado
+   silenciosamente sem confirmação do banco. */
+const Repo = {
+  async _insert(table, row, mapOut){
+    const payload = Object.assign({user_id: CurrentUser.uid()}, mapOut(row));
+    const {data, error} = await sb.from(table).insert(payload).select().single();
+    if(error) throw error;
+    return data;
+  },
+  async _update(table, id, patch){
+    const {data, error} = await sb.from(table).update(patch).eq('id', id).select().single();
+    if(error) throw error;
+    return data;
+  },
+  async _delete(table, id){
+    const {error} = await sb.from(table).delete().eq('id', id);
+    if(error) throw error;
+  },
+
+  // ---- clientes ----
+  async addClient(c){
+    const row = await this._insert('clients', c, Mapper.client.out);
+    const client = Mapper.client.in(row);
+    State.data.clients.push(client);
+    State.saveCache();
+    return client;
+  },
+  async updateClient(id, patch){
+    const current = State.data.clients.find(x=>x.id===id);
+    const merged = Object.assign({}, current, patch);
+    const row = await this._update('clients', id, Mapper.client.out(merged));
+    const updated = Mapper.client.in(row);
+    Object.assign(current, updated);
+    State.saveCache();
+    return current;
+  },
+  getClient(id){ return State.data.clients.find(c=>c.id===id); },
+  searchClients(q){
+    q = (q||'').trim().toLowerCase();
+    if(!q) return [...State.data.clients].sort((a,b)=>a.name.localeCompare(b.name));
+    return State.data.clients.filter(c =>
+      c.name.toLowerCase().includes(q) || (c.phone||'').includes(q)
+    ).sort((a,b)=>a.name.localeCompare(b.name));
+  },
+  clientLastConcludedDate(clientId){
+    const list = State.data.appointments
+      .filter(a=>a.clientId===clientId && a.status==='concluido')
+      .sort((a,b)=>(a.date+a.time)<(b.date+b.time)?1:-1);
+    return list[0] ? list[0].date : null;
+  },
+  clientHasFuturePending(clientId){
+    const today = Utils.todayISO();
+    const futureAppt = State.data.appointments.some(a =>
+      a.clientId===clientId && ['agendado','confirmado'].includes(a.status) && a.date>=today);
+    const futureReturn = State.data.returns.some(r =>
+      r.clientId===clientId && !r.done && r.date>=today);
+    return futureAppt || futureReturn;
+  },
+
+  // ---- serviços ----
+  async addService(s){
+    const row = await this._insert('services', s, Mapper.service.out);
+    const svc = Mapper.service.in(row);
+    State.data.services.push(svc);
+    State.saveCache();
+    return svc;
+  },
+  async updateService(id, patch){
+    const current = State.data.services.find(x=>x.id===id);
+    const merged = Object.assign({}, current, patch);
+    const row = await this._update('services', id, Mapper.service.out(merged));
+    Object.assign(current, Mapper.service.in(row));
+    State.saveCache();
+    return current;
+  },
+  async deleteService(id){
+    await this._delete('services', id);
+    State.data.services = State.data.services.filter(s=>s.id!==id);
+    State.saveCache();
+  },
+
+  // ---- atendimentos ----
+  async addAppointment(a){
+    const row = await this._insert('appointments', a, Mapper.appointment.out);
+    const appt = Mapper.appointment.in(row);
+    State.data.appointments.push(appt);
+    State.saveCache();
+    return appt;
+  },
+  async updateAppointment(id, patch){
+    const current = State.data.appointments.find(x=>x.id===id);
+    const merged = Object.assign({}, current, patch);
+    const dbPatch = Object.assign(Mapper.appointment.out(merged), patch.status? {status:patch.status} : {});
+    const row = await this._update('appointments', id, dbPatch);
+    Object.assign(current, Mapper.appointment.in(row));
+    State.saveCache();
+    return current;
+  },
+  async setAppointmentStatus(id, status){
+    return this.updateAppointment(id, {status});
+  },
+  appointmentsForDate(iso){
+    return State.data.appointments.filter(a=>a.date===iso).sort((a,b)=>a.time<b.time?-1:1);
+  },
+  upcomingAppointments(){
+    const today = Utils.todayISO();
+    return State.data.appointments
+      .filter(a=>a.date>=today && a.status!=='cancelado')
+      .sort((a,b)=>(a.date+a.time)<(b.date+b.time)?-1:1);
+  },
+
+  // ---- retornos ----
+  async addReturn(r){
+    const row = await this._insert('returns', r, Mapper.ret.out);
+    const ret = Mapper.ret.in(row);
+    State.data.returns.push(ret);
+    State.saveCache();
+    return ret;
+  },
+  async markReturnDone(id){
+    const row = await this._update('returns', id, {done:true});
+    const r = State.data.returns.find(x=>x.id===id);
+    Object.assign(r, Mapper.ret.in(row));
+    State.saveCache();
+    return r;
+  },
+  async deleteReturn(id){
+    await this._delete('returns', id);
+    State.data.returns = State.data.returns.filter(r=>r.id!==id);
+    State.saveCache();
+  },
+
+  // ---- financeiro (RLS também exige plano com "financeiro" habilitado) ----
+  async addTransaction(t){
+    const row = await this._insert('transactions', t, Mapper.tx.out);
+    const tx = Mapper.tx.in(row);
+    State.data.transactions.push(tx);
+    State.saveCache();
+    return tx;
+  },
+  async deleteTransaction(id){
+    await this._delete('transactions', id);
+    State.data.transactions = State.data.transactions.filter(t=>t.id!==id);
+    State.saveCache();
+  },
+  monthSummary(monthKey){
+    monthKey = monthKey || Utils.monthKey(Utils.todayISO());
+    const txs = State.data.transactions.filter(t=>Utils.monthKey(t.date)===monthKey);
+    const receita = txs.filter(t=>t.type==='receita').reduce((s,t)=>s+t.value,0);
+    const despesa = txs.filter(t=>t.type==='despesa').reduce((s,t)=>s+t.value,0);
+    const concluidos = State.data.appointments.filter(a=>Utils.monthKey(a.date)===monthKey && a.status==='concluido').length;
+    return {receita, despesa, resultado:receita-despesa, concluidos, txs: txs.sort((a,b)=>a.date<b.date?1:-1)};
+  }
+};
+
+/* ---------------------------- EVENT ENGINE ----------------------------
+   EVENTO → CONTEXTO → PRIORIDADE → AÇÃO
+   Gera: oportunidades e itens de atenção, evitando duplicidade e ruído. */
+const EventEngine = {
+  OPPORTUNITY_DAYS: 30,
+  ATTENTION_DAYS: 7,
+
+  opportunities(){
+    const today = Utils.todayISO();
+    const out = [];
+    const seen = new Set();
+
+    // retorno vencido / retorno hoje
+    State.data.returns.forEach(r=>{
+      if(r.done) return;
+      const client = Repo.getClient(r.clientId);
+      if(!client) return;
+      if(r.date < today){
+        out.push({id:'ret-late-'+r.id, kind:'retorno_vencido', priority:3,
+          title:`Retorno atrasado: ${client.name}`,
+          detail:`Retorno era em ${Utils.dateBR(r.date)}${r.reason? ' — '+r.reason:''}.`,
+          clientId:client.id, refId:r.id});
+      } else if(r.date === today){
+        out.push({id:'ret-today-'+r.id, kind:'retorno_hoje', priority:2,
+          title:`Retorno hoje: ${client.name}`,
+          detail:r.reason || 'Retorno agendado para hoje.',
+          clientId:client.id, refId:r.id});
+      }
+    });
+
+    // clientes sem retorno após atendimento concluído / muito tempo sem atendimento
+    State.data.clients.forEach(c=>{
+      const last = Repo.clientLastConcludedDate(c.id);
+      if(!last) return;
+      const dias = Utils.daysBetween(last, today);
+      if(dias >= this.OPPORTUNITY_DAYS && !Repo.clientHasFuturePending(c.id)){
+        const key = 'noret-'+c.id;
+        if(seen.has(key)) return;
+        seen.add(key);
+        out.push({id:key, kind:'sem_retorno', priority:1,
+          title:`${c.name} está há ${dias} dias sem novo atendimento`,
+          detail:`Último atendimento em ${Utils.dateBR(last)}. Considere sugerir um retorno.`,
+          clientId:c.id});
+      }
+    });
+
+    return out.filter(o=>!State.data.dismissed.includes(o.id))
+      .sort((a,b)=>b.priority-a.priority);
+  },
+
+  attention(){
+    const today = Utils.todayISO();
+    const out = [];
+    State.data.appointments.forEach(a=>{
+      if(!['cancelado','no-show'].includes(a.status)) return;
+      const dias = Utils.daysBetween(a.date, today);
+      if(dias < 0 || dias > this.ATTENTION_DAYS) return;
+      const client = Repo.getClient(a.clientId);
+      const id = 'att-'+a.id;
+      if(State.data.dismissed.includes(id)) return;
+      out.push({id, kind:a.status, priority: a.status==='no-show'?2:1,
+        title: a.status==='no-show' ? `Não compareceu: ${client? client.name:'Cliente'}` : `Cancelado: ${client? client.name:'Cliente'}`,
+        detail:`Atendimento de ${Utils.dateBR(a.date)} às ${a.time}.`,
+        apptId:a.id, clientId:a.clientId});
+    });
+    return out.sort((a,b)=>b.priority-a.priority);
+  },
+
+  dismiss(id){
+    if(!State.data.dismissed.includes(id)) State.data.dismissed.push(id);
+    State.saveCache();
+  },
+
+  insightsCounts(){
+    const today = Utils.todayISO();
+    const from = new Date(); from.setDate(from.getDate()-30);
+    const fromISO = from.toISOString().slice(0,10);
+    const cancelamentos = State.data.appointments.filter(a=>a.status==='cancelado' && a.date>=fromISO && a.date<=today).length;
+    const noshow = State.data.appointments.filter(a=>a.status==='no-show' && a.date>=fromISO && a.date<=today).length;
+    const oportunidades = this.opportunities().length;
+    const semRetornoAgendado = State.data.clients.filter(c=>{
+      const last = Repo.clientLastConcludedDate(c.id);
+      return last && !Repo.clientHasFuturePending(c.id);
+    }).length;
+    return {cancelamentos, noshow, oportunidades, semRetornoAgendado};
+  }
+};
+
+/* ---------------------------- CONTA / SESSÃO DO ASSINANTE (Supabase Auth real) ----
+   Sessão de verdade: token JWT emitido pelo Supabase Auth, renovado
+   automaticamente pelo SDK e validado no servidor a cada chamada — o
+   usuário nunca "vira outro usuário" editando o navegador, porque cada
+   linha das tabelas só é liberada pelo Postgres (RLS) para o dono do
+   auth.uid() correspondente. */
+const CurrentUser = {
+  session: null,
+  profile: null,
+  subscription: null,
+  plan: null,
+  isAdmin: false,
+  uid(){ return this.session?.user?.id || null; },
+  email(){ return this.session?.user?.email || ''; },
+  async refresh(){
+    const {data:{session}} = await sb.auth.getSession();
+    this.session = session || null;
+    if(!this.session){ this.profile=null; this.subscription=null; this.plan=null; this.isAdmin=false; return; }
+    const uid = this.session.user.id;
+    const [profileRes, subsRes, adminRes] = await Promise.all([
+      sb.from('profiles').select('*').eq('user_id', uid).maybeSingle(),
+      sb.from('subscriptions').select('*').eq('user_id', uid).order('created_at', {ascending:false}).limit(1),
+      sb.from('admin_users').select('user_id').eq('user_id', uid).maybeSingle()
+    ]);
+    this.profile = profileRes.data || null;
+    this.subscription = (subsRes.data && subsRes.data[0]) || null;
+    this.isAdmin = !!adminRes.data;
+    if(this.subscription){
+      const {data:plan} = await sb.from('plans').select('*').eq('id', this.subscription.plan_id).maybeSingle();
+      this.plan = plan || null;
+    } else { this.plan = null; }
+  },
+  async logout(){
+    await sb.auth.signOut();
+    this.session=null; this.profile=null; this.subscription=null; this.plan=null; this.isAdmin=false;
+  },
+  async savePreferences(){
+    const uid = this.uid();
+    if(!uid) return;
+    const prefs = Object.assign({}, State.data.settings, {dismissed: State.data.dismissed});
+    const {error} = await sb.from('profiles').update({preferences: prefs}).eq('user_id', uid);
+    if(error){ console.error('savePreferences falhou', error); Toast.show('Preferência salva apenas neste dispositivo (sem conexão).'); }
+    else if(this.profile) this.profile.preferences = prefs;
+  }
+};
+
+/* ---------------------------- CONTROLE DE ACESSO ----------------------------
+   isAllowed()/hasFinanceiro() aqui são só para a INTERFACE reagir corretamente
+   (mostrar/ocultar telas). A garantia de verdade contra um usuário bloqueado
+   ou sem plano Premium tentando ler/gravar dados está nas políticas de RLS
+   do banco (schema.sql — is_active_user() e subscription_grants()), que
+   funcionam mesmo que este JavaScript seja totalmente ignorado ou alterado. */
+const Access = {
+  isAllowed(){
+    if(!CurrentUser.profile) return false;
+    return !CurrentUser.profile.blocked;
+  },
+  reason(){
+    if(!CurrentUser.session) return 'not_authenticated';
+    if(!CurrentUser.profile) return 'no_profile';
+    if(CurrentUser.profile.blocked) return 'blocked';
+    return 'ok';
+  },
+  currentPlan(){ return CurrentUser.plan; },
+  hasFinanceiro(){
+    const sub = CurrentUser.subscription, plan = CurrentUser.plan;
+    if(!sub || !plan) return false;
+    if(!['trialing','active'].includes(sub.status)) return false;
+    if(sub.current_period_end && new Date(sub.current_period_end) < new Date()) return false;
+    return !!(plan.features && plan.features.financeiro);
+  },
+  effectivePrice(sub, plan){
+    if(!sub) return 0;
+    const base = (sub.custom_price!==null && sub.custom_price!==undefined) ? Number(sub.custom_price) : Number(plan?.price||0);
+    const discount = Number(sub.discount_percent)||0;
+    return Math.max(0, base * (1 - discount/100));
+  }
+};
+
+/* ---------------------------- ADMIN REPO (usuários/planos via Supabase) ---------------
+   Substitui o antigo array local. Lê/grava direto no Postgres. Criar e
+   excluir LOGIN (auth.users) exige a service_role key — por segurança essa
+   chave nunca fica no navegador, então essas duas ações chamam Edge
+   Functions (admin-create-user / admin-delete-user) que rodam no servidor
+   do Supabase e primeiro confirmam que quem está chamando é mesmo um
+   administrador (tabela admin_users) antes de fazer qualquer coisa. */
+const AdminRepo = {
+  users: [],   // cada item: {profile, subscription, plan}
+  plans: [],
+
+  async loadAll(){
+    const [profilesRes, subsRes, plansRes] = await Promise.all([
+      sb.from('profiles').select('*'),
+      sb.from('subscriptions').select('*'),
+      sb.from('plans').select('*')
+    ]);
+    if(profilesRes.error) throw profilesRes.error;
+    if(subsRes.error) throw subsRes.error;
+    if(plansRes.error) throw plansRes.error;
+    this.plans = plansRes.data;
+    this.users = profilesRes.data.map(p=>{
+      const subsOfUser = subsRes.data.filter(s=>s.user_id===p.user_id)
+        .sort((a,b)=> (b.created_at||'').localeCompare(a.created_at||''));
+      const sub = subsOfUser[0] || null;
+      const plan = sub ? this.plans.find(pl=>pl.id===sub.plan_id) : null;
+      return {profile:p, subscription:sub, plan};
+    });
+  },
+  async _authedFetch(path, body){
+    const {data:{session}} = await sb.auth.getSession();
+    const res = await fetch(`${SUPABASE_CONFIG.url}/functions/v1/${path}`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'Authorization':`Bearer ${session?.access_token||''}`},
+      body: JSON.stringify(body)
+    });
+    const out = await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(out.detail || out.error || ('Falha ao chamar '+path));
+    return out;
+  },
+  async createUser(payload){
+    const out = await this._authedFetch('admin-create-user', payload);
+    await this.loadAll();
+    return out;
+  },
+  async deleteUser(userId){
+    await this._authedFetch('admin-delete-user', {userId});
+    await this.loadAll();
+  },
+  async toggleBlock(userId, currentlyBlocked){
+    const {error} = await sb.from('profiles').update({blocked: !currentlyBlocked}).eq('user_id', userId);
+    if(error) throw error;
+    await this.loadAll();
+  },
+  async updateProfile(userId, patch){
+    const {error} = await sb.from('profiles').update(patch).eq('user_id', userId);
+    if(error) throw error;
+    await this.loadAll();
+  },
+  async updateSubscription(userId, patch){
+    const {error} = await sb.from('subscriptions').update(patch).eq('user_id', userId);
+    if(error) throw error;
+    await this.loadAll();
+  },
+  async addPlan(p){
+    const {error} = await sb.from('plans').insert({
+      name:(p.name||'').trim(), price:Number(p.price)||0, billing_period:p.billingPeriod||'mensal',
+      description:(p.description||'').trim(), features:{financeiro: !!p.financeiro}
+    });
+    if(error) throw error;
+    await this.loadAll();
+  },
+  async updatePlan(id, patch){
+    const dbPatch = {};
+    if('name' in patch) dbPatch.name = patch.name;
+    if('price' in patch) dbPatch.price = Number(patch.price);
+    if('billingPeriod' in patch) dbPatch.billing_period = patch.billingPeriod;
+    if('description' in patch) dbPatch.description = patch.description;
+    if('financeiro' in patch) dbPatch.features = {financeiro: !!patch.financeiro};
+    const {error} = await sb.from('plans').update(dbPatch).eq('id', id);
+    if(error) throw error;
+    await this.loadAll();
+  },
+  async togglePlanActive(id){
+    const p = this.plans.find(x=>x.id===id);
+    const {error} = await sb.from('plans').update({active: !p.active}).eq('id', id);
+    if(error) throw error;
+    await this.loadAll();
+  },
+  async deletePlan(id){
+    const inUse = this.users.some(u=>u.subscription && u.subscription.plan_id===id);
+    if(inUse) return {error:'in_use'};
+    const {error} = await sb.from('plans').delete().eq('id', id);
+    if(error) return {error:error.message};
+    await this.loadAll();
+    return {ok:true};
+  },
+  kpis(){
+    const users = this.users;
+    const now = new Date();
+    const ativos = users.filter(u=>!u.profile.blocked).length;
+    const bloqueados = users.filter(u=>u.profile.blocked).length;
+    const pagantesAtivos = users.filter(u=>{
+      if(!u.subscription || !u.plan) return false;
+      if(!['active','trialing'].includes(u.subscription.status)) return false;
+      if(u.subscription.current_period_end && new Date(u.subscription.current_period_end) < now) return false;
+      return Access.effectivePrice(u.subscription, u.plan) > 0;
+    });
+    const gratuitos = users.length - pagantesAtivos.length;
+    const mrr = pagantesAtivos.reduce((s,u)=>s+Access.effectivePrice(u.subscription,u.plan), 0);
+    return {total:users.length, ativos, bloqueados, gratuitos, pagantes:pagantesAtivos.length, mrr};
+  }
+};
+
+/* ---------------------------- TOAST ---------------------------- */
+const Toast = {
+  show(msg){
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(this._t);
+    this._t = setTimeout(()=>el.classList.remove('show'), 2200);
+  }
+};
+
+/* ---------------------------- NAV ---------------------------- */
+const Nav = {
+  current: 'hoje',
+  go(screen){
+    this.current = screen;
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('screen-'+screen).classList.add('active');
+    const btn = document.querySelector(`.navbtn[data-nav="${screen}"]`);
+    if(btn) btn.classList.add('active');
+    Render.screen(screen);
+    window.scrollTo(0,0);
+  }
+};
+
+/* ---------------------------- RENDER ---------------------------- */
+const Render = {
+  screen(name){
+    if(name==='hoje') this.hoje();
+    else if(name==='agenda') this.agenda();
+    else if(name==='clientes') this.clientes();
+    else if(name==='insights') this.insights();
+    else if(name==='mais') this.mais();
+    this.updateNotifDot();
+  },
+  refreshCurrent(){ this.screen(Nav.current); },
+
+  updateNotifDot(){
+    const count = EventEngine.attention().length + EventEngine.opportunities().length;
+    document.getElementById('notifDot').classList.toggle('show', count>0);
+  },
+
+  apptCard(a, opts){
+    opts = opts||{};
+    const client = Repo.getClient(a.clientId);
+    const service = State.data.services.find(s=>s.id===a.serviceId);
+    const statusLabel = {agendado:'Agendado', confirmado:'Confirmado', concluido:'Concluído', cancelado:'Cancelado', 'no-show':'Não compareceu'}[a.status];
+    const statusClass = {agendado:'agendado', confirmado:'confirmado', concluido:'concluido', cancelado:'cancelado', 'no-show':'noshow'}[a.status];
+    let actions = '';
+    if(a.status==='agendado'){
+      actions = `<button onclick="Actions.confirmAppt('${a.id}')">Confirmar</button>
+                 <button class="primary" onclick="Actions.completeAppt('${a.id}')">Concluir</button>
+                 <button onclick="Actions.noshowAppt('${a.id}')">No-show</button>
+                 <button class="danger" onclick="Actions.cancelAppt('${a.id}')">Cancelar</button>`;
+    } else if(a.status==='confirmado'){
+      actions = `<button class="primary" onclick="Actions.completeAppt('${a.id}')">Concluir</button>
+                 <button onclick="Actions.noshowAppt('${a.id}')">No-show</button>
+                 <button class="danger" onclick="Actions.cancelAppt('${a.id}')">Cancelar</button>`;
+    } else if(a.status==='concluido'){
+      actions = `<button onclick="Modals.openReturn(null,'${a.clientId}')">Criar retorno</button>`;
+    }
+    return `<div class="item">
+      <div class="row1">
+        <div>
+          <div class="who">${Utils.esc(client? client.name : 'Cliente removido')}</div>
+          <div class="meta">${Utils.esc(service? service.name : 'Serviço')} · ${a.date===Utils.todayISO()? 'hoje' : Utils.dateBR(a.date)+' · '+Utils.weekdayShort(a.date)} · ${a.time} · ${Utils.money(a.price)}</div>
+        </div>
+        <span class="badge ${statusClass}">${statusLabel}</span>
+      </div>
+      <div class="actions">${actions}
+        <button onclick="Modals.openAppointment('${a.id}')">Editar</button>
+      </div>
+    </div>`;
+  },
+
+  hoje(){
+    const today = Utils.todayISO();
+    const todays = Repo.appointmentsForDate(today);
+    const todaysActive = todays.filter(a=>a.status!=='cancelado');
+    const returnsToday = State.data.returns.filter(r=>!r.done && r.date===today);
+    const birthdays = State.data.clients.filter(c=>Utils.isBirthdayToday(c.birthday));
+    const attention = EventEngine.attention();
+    const opportunities = EventEngine.opportunities();
+    const dateStr = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long'});
+    const summary = Repo.monthSummary();
+    const temFinanceiro = Access.hasFinanceiro();
+
+    document.getElementById('screen-hoje').innerHTML = `
+      <div class="date-line" style="text-transform:capitalize">${dateStr}</div>
+
+      <div class="grid-3" style="margin-top:14px;">
+        <div class="stat-card accent"><div class="num">${todaysActive.length}</div><div class="lbl">Atendimentos hoje</div></div>
+        <div class="stat-card"><div class="num">${returnsToday.length}</div><div class="lbl">Retornos hoje</div></div>
+        <div class="stat-card"><div class="num">${birthdays.length}</div><div class="lbl">Aniversários</div></div>
+      </div>
+
+      <div class="quick-actions">
+        <button onclick="Modals.openAppointment()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Novo atendimento</button>
+        <button onclick="Modals.openClient()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Novo cliente</button>
+        <button onclick="Modals.openReturn()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Novo retorno</button>
+      </div>
+
+      ${attention.length ? `
+      <div class="section-title"><h2>Atenção</h2><span class="count">${attention.length}</span></div>
+      <div class="list">
+        ${attention.slice(0,4).map(item=>`
+          <div class="item attention-item">
+            <div class="row1">
+              <div><div class="who">${Utils.esc(item.title)}</div><div class="meta">${Utils.esc(item.detail)}</div></div>
+            </div>
+            <div class="actions">
+              <button onclick="Actions.dismiss('${item.id}')">Marcar como visto</button>
+              ${item.clientId? `<button onclick="Nav.go('clientes'); Render.openClientDetail('${item.clientId}')">Ver cliente</button>`:''}
+            </div>
+          </div>`).join('')}
+      </div>` : ''}
+
+      <div class="section-title"><h2>Agenda de hoje</h2><button class="link" onclick="Nav.go('agenda')">ver agenda</button></div>
+      ${todays.length ? `<div class="list">${todays.map(a=>this.apptCard(a)).join('')}</div>`
+        : `<div class="empty"><b>Nada agendado para hoje</b>Toque em "Novo atendimento" para começar.</div>`}
+
+      ${returnsToday.length ? `
+      <div class="section-title"><h2>Retornos de hoje</h2></div>
+      <div class="list">
+        ${returnsToday.map(r=>{
+          const c = Repo.getClient(r.clientId);
+          return `<div class="item">
+            <div class="row1"><div><div class="who">${Utils.esc(c? c.name:'Cliente')}</div><div class="meta">${Utils.esc(r.reason||'Retorno agendado')}</div></div></div>
+            <div class="actions"><button class="primary" onclick="Actions.completeReturn('${r.id}')">Concluir retorno</button></div>
+          </div>`;
+        }).join('')}
+      </div>` : ''}
+
+      ${birthdays.length ? `
+      <div class="section-title"><h2>Aniversariantes</h2></div>
+      <div class="list">
+        ${birthdays.map(c=>`<div class="item"><div class="row1"><div><div class="who">🎂 ${Utils.esc(c.name)}</div><div class="meta">${Utils.esc(c.phone||'sem telefone')}</div></div></div></div>`).join('')}
+      </div>` : ''}
+
+      <div class="section-title"><h2>Oportunidades</h2><button class="link" onclick="Nav.go('insights')">ver todas</button></div>
+      ${opportunities.length ? `<div class="list">${opportunities.slice(0,3).map(o=>`
+        <div class="item opportunity">
+          <div class="row1"><div><div class="who">${Utils.esc(o.title)}</div><div class="meta">${Utils.esc(o.detail)}</div></div></div>
+          <div class="actions">
+            <button onclick="Actions.dismiss('${o.id}')">Ignorar</button>
+            <button class="primary" onclick="Modals.openReturn(null,'${o.clientId}')">Criar retorno</button>
+          </div>
+        </div>`).join('')}</div>` : `<div class="empty">Nenhuma oportunidade identificada agora.</div>`}
+
+      <div class="section-title"><h2>Financeiro</h2><button class="link" onclick="Nav.go('mais'); Render.maisView='financeiro'; Render.mais();">ver mais</button></div>
+      ${temFinanceiro ? `
+        <div class="card">
+          <div class="grid-2">
+            <div><div class="hint">Receita do mês</div><div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--primary)">${Utils.money(summary.receita)}</div></div>
+            <div><div class="hint">Despesa do mês</div><div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--danger)">${Utils.money(summary.despesa)}</div></div>
+          </div>
+        </div>` : `<div class="locked"><b>Financeiro Premium</b>Seu plano atual não inclui o financeiro. Fale com o administrador para assinar o plano Premium.</div>`}
+    `;
+  },
+
+  agendaFilter: 'todos',
+  agenda(){
+    const list = Repo.upcomingAppointments().concat(
+      State.data.appointments.filter(a=>a.status==='cancelado' && a.date>=Utils.todayISO())
+    );
+    const filtered = this.agendaFilter==='todos' ? list : list.filter(a=>a.status===this.agendaFilter);
+    const grouped = {};
+    filtered.forEach(a=>{ (grouped[a.date] = grouped[a.date]||[]).push(a); });
+    const dates = Object.keys(grouped).sort();
+
+    document.getElementById('screen-agenda').innerHTML = `
+      <div class="section-title" style="margin-top:14px;"><h2>Agenda</h2>
+        <button class="link" onclick="Modals.openAppointment()">+ novo</button>
+      </div>
+      <div class="tabs">
+        ${['todos','agendado','confirmado','concluido','cancelado','no-show'].map(s=>{
+          const label = {todos:'Todos', agendado:'Agendados', confirmado:'Confirmados', concluido:'Concluídos', cancelado:'Cancelados','no-show':'No-show'}[s];
+          return `<button class="${this.agendaFilter===s?'active':''}" onclick="Render.agendaFilter='${s}'; Render.agenda();">${label}</button>`;
+        }).join('')}
+      </div>
+      ${dates.length ? dates.map(d=>`
+        <div class="section-title"><h2 style="text-transform:capitalize">${d===Utils.todayISO()?'Hoje':Utils.dateBR(d)+' · '+Utils.weekdayShort(d)}</h2></div>
+        <div class="list">${grouped[d].map(a=>this.apptCard(a)).join('')}</div>
+      `).join('') : `<div class="empty" style="margin-top:16px;"><b>Nenhum atendimento por aqui</b>Ajuste o filtro ou crie um novo atendimento.</div>`}
+    `;
+  },
+
+  clientQuery: '',
+  clienteDetailId: null,
+  clientes(){
+    if(this.clienteDetailId){ this.clientDetail(this.clienteDetailId); return; }
+    const list = Repo.searchClients(this.clientQuery);
+    document.getElementById('screen-clientes').innerHTML = `
+      <div class="section-title" style="margin-top:14px;"><h2>Clientes</h2><button class="link" onclick="Modals.openClient()">+ novo</button></div>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="clientSearchInput" placeholder="Buscar por nome ou telefone" value="${Utils.esc(this.clientQuery)}" oninput="Render.clientQuery=this.value; Render.clientes();">
+      </div>
+      ${list.length ? `<div class="list" style="margin-top:12px;">
+        ${list.map(c=>{
+          const last = Repo.clientLastConcludedDate(c.id);
+          return `<button class="item" style="width:100%; align-items:stretch; border:1px solid var(--border);" onclick="Render.openClientDetail('${c.id}')">
+            <div class="row1"><div><div class="who">${Utils.esc(c.name)}</div><div class="meta">${Utils.esc(c.phone||'sem telefone')} ${last? '· último atendimento '+Utils.dateBR(last):''}</div></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--muted)"><path d="m9 6 6 6-6 6"/></svg></div>
+          </button>`;
+        }).join('')}
+      </div>` : `<div class="empty" style="margin-top:16px;"><b>${this.clientQuery? 'Nenhum cliente encontrado':'Nenhum cliente cadastrado'}</b>${this.clientQuery? 'Tente outro termo de busca.':'Toque em "+ novo" para cadastrar o primeiro cliente.'}</div>`}
+    `;
+    // manter o foco no campo ao re-renderizar durante digitação
+    const el = document.getElementById('clientSearchInput');
+    if(el && document.activeElement!==el && this._keepFocus){
+      el.focus(); el.setSelectionRange(el.value.length, el.value.length);
+    }
+  },
+  openClientDetail(id){ this.clienteDetailId = id; this.clientes(); },
+  closeClientDetail(){ this.clienteDetailId = null; this.clientes(); },
+  clientDetail(id){
+    const c = Repo.getClient(id);
+    if(!c){ this.clienteDetailId=null; this.clientes(); return; }
+    const history = State.data.appointments.filter(a=>a.clientId===id).sort((a,b)=>(a.date+a.time)<(b.date+b.time)?1:-1);
+    const returns = State.data.returns.filter(r=>r.clientId===id).sort((a,b)=>a.date<b.date?1:-1);
+    document.getElementById('screen-clientes').innerHTML = `
+      <div class="subheader" style="margin-top:14px;">
+        <button class="backbtn" onclick="Render.closeClientDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="m15 18-6-6 6-6"/></svg></button>
+        <h2 style="font-size:17px;">${Utils.esc(c.name)}</h2>
+      </div>
+      <div class="card">
+        <div class="grid-2">
+          <div><div class="hint">Telefone</div><div>${Utils.esc(c.phone||'—')}</div></div>
+          <div><div class="hint">Aniversário</div><div>${c.birthday? Utils.dateBR(c.birthday):'—'}</div></div>
+        </div>
+        ${c.notes? `<div style="margin-top:10px;"><div class="hint">Observações</div><div>${Utils.esc(c.notes)}</div></div>`:''}
+      </div>
+      <div class="btn-row">
+        <button class="btn secondary" onclick="Modals.openClient('${c.id}')">Editar</button>
+        <button class="btn" onclick="Modals.openAppointment(null,'${c.id}')">Novo atendimento</button>
+      </div>
+
+      <div class="section-title"><h2>Retornos</h2><button class="link" onclick="Modals.openReturn(null,'${c.id}')">+ novo</button></div>
+      ${returns.length ? `<div class="list">${returns.map(r=>`
+        <div class="item">
+          <div class="row1"><div><div class="who">${r.done?'✔ ':''}${Utils.dateBR(r.date)}${r.time? ' · '+r.time:''}</div><div class="meta">${Utils.esc(r.reason||'sem motivo informado')}</div></div></div>
+          ${!r.done? `<div class="actions"><button class="primary" onclick="Actions.completeReturn('${r.id}')">Concluir</button><button class="danger" onclick="Actions.deleteReturnConfirm('${r.id}')">Remover</button></div>`:''}
+        </div>`).join('')}</div>` : `<div class="empty">Nenhum retorno cadastrado.</div>`}
+
+      <div class="section-title"><h2>Histórico de atendimentos</h2></div>
+      ${history.length ? `<div class="list">${history.map(a=>this.apptCard(a)).join('')}</div>` : `<div class="empty">Nenhum atendimento registrado ainda.</div>`}
+    `;
+  },
+
+  insights(){
+    const counts = EventEngine.insightsCounts();
+    const opportunities = EventEngine.opportunities();
+    const overdue = State.data.returns.filter(r=>!r.done && r.date<Utils.todayISO());
+    document.getElementById('screen-insights').innerHTML = `
+      <div class="section-title" style="margin-top:14px;"><h2>Insights (últimos 30 dias)</h2></div>
+      <div class="grid-2">
+        <div class="stat-card warn"><div class="num">${counts.cancelamentos}</div><div class="lbl">Cancelamentos</div></div>
+        <div class="stat-card warn"><div class="num">${counts.noshow}</div><div class="lbl">Não comparecimentos</div></div>
+        <div class="stat-card accent"><div class="num">${counts.oportunidades}</div><div class="lbl">Oportunidades ativas</div></div>
+        <div class="stat-card"><div class="num">${counts.semRetornoAgendado}</div><div class="lbl">Clientes sem retorno</div></div>
+      </div>
+
+      <div class="section-title"><h2>Retornos vencidos</h2></div>
+      ${overdue.length? `<div class="list">${overdue.map(r=>{
+        const c = Repo.getClient(r.clientId);
+        return `<div class="item attention-item"><div class="row1"><div><div class="who">${Utils.esc(c? c.name:'Cliente')}</div><div class="meta">Era em ${Utils.dateBR(r.date)} — ${Utils.esc(r.reason||'sem motivo')}</div></div></div>
+        <div class="actions"><button class="primary" onclick="Actions.completeReturn('${r.id}')">Concluir</button></div></div>`;
+      }).join('')}</div>` : `<div class="empty">Nenhum retorno vencido. 🎉</div>`}
+
+      <div class="section-title"><h2>Todas as oportunidades</h2></div>
+      ${opportunities.length ? `<div class="list">${opportunities.map(o=>`
+        <div class="item opportunity">
+          <div class="row1"><div><div class="who">${Utils.esc(o.title)}</div><div class="meta">${Utils.esc(o.detail)}</div></div></div>
+          <div class="actions">
+            <button onclick="Actions.dismiss('${o.id}')">Ignorar</button>
+            <button class="primary" onclick="Modals.openReturn(null,'${o.clientId}')">Criar retorno</button>
+          </div>
+        </div>`).join('')}</div>` : `<div class="empty">Tudo em dia por aqui.</div>`}
+    `;
+  },
+
+  maisView: 'menu',
+  mais(){
+    const el = document.getElementById('screen-mais');
+    if(this.maisView==='menu') return this.maisMenu(el);
+    if(this.maisView==='conta') return this.maisConta(el);
+    if(this.maisView==='financeiro') return this.maisFinanceiro(el);
+    if(this.maisView==='servicos') return this.maisServicos(el);
+    if(this.maisView==='preferencias') return this.maisPreferencias(el);
+    if(this.maisView==='plano') return this.maisPlano(el);
+    if(this.maisView==='dados') return this.maisDados(el);
+  },
+  maisMenu(el){
+    const plan = Access.currentPlan();
+    const profile = CurrentUser.profile;
+    el.innerHTML = `
+      <div class="section-title" style="margin-top:14px;"><h2>Mais</h2></div>
+      <span class="plan-pill ${plan && plan.features && plan.features.financeiro ?'premium':''}">${plan? Utils.esc(plan.name) : 'Sem plano'}</span>
+      <div class="menu-list" style="margin-top:14px;">
+        ${this.menuItem('conta','👤','Minha conta', profile? Utils.esc(profile.name||CurrentUser.email()) : 'Conta e assinatura')}
+        ${this.menuItem('financeiro','💰','Financeiro','Receitas, despesas e resultado do mês')}
+        ${this.menuItem('servicos','🧰','Serviços','Nomes, duração e preços')}
+        ${this.menuItem('preferencias','🔔','Notificações e preferências','Lembretes de retorno e alertas')}
+        ${this.menuItem('plano','⭐','Plano e assinatura','Ver plano, preço e vencimento')}
+        ${this.menuItem('dados','🗄️','Meus dados','Exportar, apagar dados e painel administrativo')}
+      </div>
+    `;
+  },
+  menuItem(view, icon, title, sub){
+    return `<button class="menu-item" onclick="Render.maisView='${view}'; Render.mais();">
+      <div class="ic">${icon}</div>
+      <div class="txt"><div class="t1">${title}</div><div class="t2">${sub}</div></div>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+    </button>`;
+  },
+  backHeader(title){
+    return `<div class="subheader" style="margin-top:14px;">
+      <button class="backbtn" onclick="Render.maisView='menu'; Render.mais();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="m15 18-6-6 6-6"/></svg></button>
+      <h2 style="font-size:17px;">${title}</h2>
+    </div>`;
+  },
+  maisFinanceiro(el){
+    if(!Access.hasFinanceiro()){
+      el.innerHTML = this.backHeader('Financeiro') + `
+        <div class="locked"><b>Recurso Premium</b>Seu plano atual não inclui o financeiro. Fale com o administrador para assinar um plano com esse recurso.
+          <div style="margin-top:14px;"><button class="btn" onclick="Render.maisView='plano'; Render.mais();">Ver meu plano</button></div>
+        </div>`;
+      return;
+    }
+    const s = Repo.monthSummary();
+    el.innerHTML = this.backHeader('Financeiro') + `
+      <div class="grid-3">
+        <div class="stat-card accent"><div class="num" style="font-size:16px;">${Utils.money(s.receita)}</div><div class="lbl">Receita</div></div>
+        <div class="stat-card warn"><div class="num" style="font-size:16px;">${Utils.money(s.despesa)}</div><div class="lbl">Despesa</div></div>
+        <div class="stat-card"><div class="num" style="font-size:16px;">${Utils.money(s.resultado)}</div><div class="lbl">Resultado</div></div>
+      </div>
+      <div class="hint" style="margin-top:10px;">${s.concluidos} atendimento(s) concluído(s) este mês.</div>
+      <div class="btn-row">
+        <button class="btn secondary" onclick="Modals.openTransaction('despesa')">+ Despesa</button>
+        <button class="btn" onclick="Modals.openTransaction('receita')">+ Receita</button>
+      </div>
+      <div class="section-title"><h2>Lançamentos do mês</h2></div>
+      ${s.txs.length? `<div class="list">${s.txs.map(t=>`
+        <div class="item">
+          <div class="row1"><div><div class="who">${Utils.esc(t.description||t.category)}</div><div class="meta">${Utils.dateBR(t.date)} · ${Utils.esc(t.category)}</div></div>
+          <span class="badge ${t.type==='receita'?'confirmado':'cancelado'}">${t.type==='receita'?'+ ':'- '}${Utils.money(t.value)}</span></div>
+          <div class="actions"><button class="danger" onclick="Actions.deleteTransactionConfirm('${t.id}')">Remover</button></div>
+        </div>`).join('')}</div>` : `<div class="empty">Nenhum lançamento este mês.</div>`}
+    `;
+  },
+  maisServicos(el){
+    el.innerHTML = this.backHeader('Serviços') + `
+      <button class="btn" onclick="Modals.openService()">+ Novo serviço</button>
+      <div class="list" style="margin-top:14px;">
+        ${State.data.services.map(s=>`
+        <div class="item">
+          <div class="row1"><div><div class="who">${Utils.esc(s.name)}</div><div class="meta">${s.duration} min · ${Utils.money(s.price)}</div></div></div>
+          <div class="actions"><button onclick="Modals.openService('${s.id}')">Editar</button><button class="danger" onclick="Actions.deleteServiceConfirm('${s.id}')">Remover</button></div>
+        </div>`).join('') || `<div class="empty">Nenhum serviço cadastrado.</div>`}
+      </div>
+    `;
+  },
+  maisPreferencias(el){
+    const s = State.data.settings;
+    const appointmentOn = s.notifAppointment !== false;
+    const selectedAppointmentReminders = Array.isArray(s.appointmentReminders) ? s.appointmentReminders : [];
+    el.innerHTML = this.backHeader('Notificações e preferências') + `
+      <div class="section-title"><h2>Notificações essenciais</h2></div>
+      <div class="card">
+        <div class="toggle-row" style="align-items:flex-start;">
+          <div style="flex:1;">
+            <div class="t-label">Atendimento próximo</div>
+            <div class="t-sub">Avisos para o próprio profissional antes dos atendimentos.</div>
+          </div>
+          <button class="switch ${appointmentOn?'on':''}" onclick="Actions.toggleAppointmentNotifications()" aria-label="Atendimento próximo"><span class="knob"></span></button>
+        </div>
+        ${appointmentOn ? `
+          <div style="margin-top:2px; padding:14px 0 2px; border-top:1px solid var(--border);">
+            <div class="t-label" style="font-size:13px; margin-bottom:4px;">Avisar antes</div>
+            <div class="hint" style="margin:0 0 9px;">Escolha até 2 opções para todos os seus atendimentos.</div>
+            <div class="radio-group">
+              ${['24h','12h','6h','2h'].map(v=>{
+                const label = {'24h':'Aviso 24 horas','12h':'Aviso 12 horas','6h':'Aviso 06 horas','2h':'Aviso 2 horas'}[v];
+                const active = selectedAppointmentReminders.includes(v);
+                return `<button type="button" class="radio-chip ${active?'active':''}" onclick="Actions.toggleAppointmentReminder('${v}')">${label}</button>`;
+              }).join('')}
+            </div>
+            <div class="hint" style="margin-top:8px;">Você pode alterar a escolha quando quiser. A configuração é geral e vale para os atendimentos já agendados e para os novos.</div>
+          </div>
+        ` : ''}
+
+        <div class="toggle-row">
+          <div><div class="t-label">Alertas de atenção</div><div class="t-sub">Cancelamentos e não comparecimentos recentes</div></div>
+          <button class="switch ${s.notifAttention?'on':''}" onclick="Actions.toggleSetting('notifAttention')"><span class="knob"></span></button>
+        </div>
+        <div class="toggle-row">
+          <div><div class="t-label">Alertas de oportunidades</div><div class="t-sub">Clientes sem retorno agendado</div></div>
+          <button class="switch ${s.notifOpportunities?'on':''}" onclick="Actions.toggleSetting('notifOpportunities')"><span class="knob"></span></button>
+        </div>
+      </div>
+      <div class="hint" style="margin-top:8px;">Esses alertas aparecem dentro do app (sino no topo e tela Hoje). Como o app é 100% estático, ele não envia notificações push do sistema operacional.</div>
+
+      <div class="section-title"><h2>Lembrete padrão de retorno</h2></div>
+      <div class="radio-group">
+        ${['24h','1h','24h+1h','none'].map(v=>{
+          const label = {'24h':'24h antes','1h':'1h antes','24h+1h':'24h + 1h','none':'Sem lembrete'}[v];
+          return `<button class="radio-chip ${s.defaultReminder===v?'active':''}" onclick="Actions.setDefaultReminder('${v}')">${label}</button>`;
+        }).join('')}
+      </div>
+    `;
+  },
+  maisPlano(el){
+    const sub = CurrentUser.subscription;
+    const plan = CurrentUser.plan;
+    if(!sub || !plan){
+      el.innerHTML = this.backHeader('Plano e assinatura') + `<div class="empty">Nenhuma assinatura encontrada para esta conta.</div>`;
+      return;
+    }
+    const price = Access.effectivePrice(sub, plan);
+    const pago = price > 0;
+    const statusLabel = {trialing:'Em teste', active:'Ativa', past_due:'Inadimplente', canceled:'Cancelada', incomplete:'Incompleta'}[sub.status] || sub.status;
+    el.innerHTML = this.backHeader('Plano e assinatura') + `
+      <div class="card">
+        <div class="grid-2">
+          <div><div class="hint">Plano</div><div style="font-weight:700;">${Utils.esc(plan.name)}</div></div>
+          <div><div class="hint">Tipo de acesso</div><div><span class="status-pill ${pago?'pago':'gratuito'}">${pago?'Pago':'Gratuito'}</span></div></div>
+        </div>
+        ${pago ? `
+        <div class="grid-2" style="margin-top:10px;">
+          <div><div class="hint">Valor mensal</div><div style="font-weight:700;">${Utils.money(price)}${sub.discount_percent? ` <span style="color:var(--primary); font-size:12px;">(${sub.discount_percent}% off)</span>`:''}</div></div>
+          <div><div class="hint">Renova/vence em</div><div style="font-weight:700;">${sub.current_period_end? Utils.dateBR(sub.current_period_end.slice(0,10)) : 'sem vencimento definido'}</div></div>
+        </div>` : ''}
+        <div style="margin-top:10px;"><div class="hint">Situação da assinatura</div><span class="status-pill ${sub.status==='active'||sub.status==='trialing'?'ativo':'bloqueado'}">${statusLabel}</span></div>
+        ${plan.description? `<div class="hint" style="margin-top:10px;">${Utils.esc(plan.description)}</div>`:''}
+      </div>
+      ${sub.status==='past_due' ? `<div class="locked" style="margin-top:12px;"><b>Pagamento pendente</b>Sua assinatura está inadimplente. Regularize o pagamento para manter os recursos Premium liberados.</div>` : ''}
+      <div class="hint" style="margin-top:10px;">Plano, preço e condições podem ser definidos pelo administrador, ou você mesmo pode assinar um plano pago abaixo.</div>
+      <div class="section-title"><h2>Outros planos disponíveis</h2></div>
+      <div id="upgradePlansList" class="list"><div class="empty">Carregando planos…</div></div>
+    `;
+    this.loadUpgradePlans();
+  },
+  async loadUpgradePlans(){
+    const el = document.getElementById('upgradePlansList');
+    if(!el) return;
+    try{
+      const {data:plans, error} = await sb.from('plans').select('*').eq('active', true);
+      if(error) throw error;
+      const others = plans.filter(p=>p.id !== CurrentUser.subscription?.plan_id);
+      el.innerHTML = others.length ? others.map(p=>`
+        <div class="item">
+          <div class="row1"><div><div class="who">${Utils.esc(p.name)}</div><div class="meta">${Utils.money(p.price)}/${p.billing_period} ${p.description? '· '+Utils.esc(p.description):''}</div></div></div>
+          ${Number(p.price)>0 ? `
+          <div class="actions">
+            <button onclick="Actions.startCheckout('${p.id}','mercadopago')">Assinar com Mercado Pago</button>
+            <button onclick="Actions.startCheckout('${p.id}','stripe')">Assinar com Stripe</button>
+          </div>` : `<div class="hint" style="margin-top:6px;">Plano gratuito — peça ao administrador para trocar seu plano.</div>`}
+        </div>`).join('') : `<div class="empty">Nenhum outro plano disponível no momento.</div>`;
+    }catch(e){
+      el.innerHTML = `<div class="empty">Não foi possível carregar os planos agora.</div>`;
+    }
+  },
+  maisConta(el){
+    const profile = CurrentUser.profile;
+    if(!profile){
+      el.innerHTML = this.backHeader('Minha conta') + `<div class="empty">Nenhuma conta identificada.</div>`;
+      return;
+    }
+    el.innerHTML = this.backHeader('Minha conta') + `
+      <div class="card">
+        <div class="grid-2">
+          <div><div class="hint">Nome</div><div style="font-weight:700;">${Utils.esc(profile.name||'—')}</div></div>
+          <div><div class="hint">E-mail</div><div style="font-weight:700;">${Utils.esc(CurrentUser.email())}</div></div>
+        </div>
+        ${profile.phone? `<div style="margin-top:10px;"><div class="hint">Telefone</div><div>${Utils.esc(profile.phone)}</div></div>`:''}
+      </div>
+      <button class="btn secondary" style="margin-top:14px;" onclick="Modals.openChangePassword()">Alterar senha</button>
+      <button class="btn danger" style="margin-top:10px;" onclick="Actions.logout()">Sair da conta</button>
+    `;
+  },
+  maisDados(el){
+    const hasLegacy = MigrationTool.hasLegacyDataIgnoringDoneFlag();
+    el.innerHTML = this.backHeader('Meus dados') + `
+      <div class="card">
+        <div class="hint">Seus dados de verdade ficam salvos no servidor (Supabase). Este navegador guarda apenas uma cópia-cache para abrir o app rapidamente e continuar mostrando algo se a internet cair por um instante.</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn secondary" onclick="Actions.exportData()">Exportar dados (JSON)</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn danger" onclick="Actions.wipeDataConfirm()">Apagar cache local deste navegador</button>
+      </div>
+      ${hasLegacy ? `
+      <div class="section-title"><h2>Dados de uma versão anterior</h2></div>
+      <div class="btn-row"><button class="btn secondary" onclick="MigrationTool.checkAndOffer()">Verificar/importar dados antigos</button></div>
+      <div class="btn-row"><button class="btn danger" onclick="MigrationTool.clearLegacyConfirm()">Remover backup antigo deste navegador</button></div>
+      ` : ''}
+      <div class="section-title"><h2>Administração</h2></div>
+      <button class="menu-item" onclick="location.hash='#admin';">
+        <div class="ic">🛠️</div>
+        <div class="txt"><div class="t1">Painel administrativo</div><div class="t2">Usuários, planos, preços e assinaturas</div></div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
+      </button>
+    `;
+  }
+};
+
+/* ---------------------------- MODALS ---------------------------- */
+const Modals = {
+  open(html){
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('overlay').classList.add('open');
+  },
+  close(){
+    document.getElementById('overlay').classList.remove('open');
+    document.getElementById('modalBody').innerHTML = '';
+  },
+  head(title){
+    return `<div class="modal-head"><h3>${title}</h3><button class="modal-close" onclick="Modals.close()">✕</button></div>`;
+  },
+
+  openQuickAdd(){
+    this.open(`${this.head('Ação rápida')}
+      <div class="menu-list">
+        <button class="menu-item" onclick="Modals.close(); Modals.openAppointment();"><div class="ic">📅</div><div class="txt"><div class="t1">Novo atendimento</div></div></button>
+        <button class="menu-item" onclick="Modals.close(); Modals.openClient();"><div class="ic">🧑</div><div class="txt"><div class="t1">Novo cliente</div></div></button>
+        <button class="menu-item" onclick="Modals.close(); Modals.openReturn();"><div class="ic">🔁</div><div class="txt"><div class="t1">Novo retorno</div></div></button>
+        <button class="menu-item" onclick="Modals.close(); Modals.openTransaction('receita');"><div class="ic">💰</div><div class="txt"><div class="t1">Novo lançamento financeiro</div></div></button>
+      </div>`);
+  },
+
+  clientOptions(selectedId){
+    if(!State.data.clients.length) return `<option value="">Cadastre um cliente primeiro</option>`;
+    return State.data.clients.slice().sort((a,b)=>a.name.localeCompare(b.name))
+      .map(c=>`<option value="${c.id}" ${c.id===selectedId?'selected':''}>${Utils.esc(c.name)}</option>`).join('');
+  },
+  serviceOptions(selectedId){
+    if(!State.data.services.length) return `<option value="">Nenhum serviço cadastrado</option>`;
+    return State.data.services.map(s=>`<option value="${s.id}" ${s.id===selectedId?'selected':''}>${Utils.esc(s.name)} · ${s.duration}min · ${Utils.money(s.price)}</option>`).join('');
+  },
+
+  openClient(id){
+    const c = id ? Repo.getClient(id) : null;
+    this.open(`${this.head(c? 'Editar cliente':'Novo cliente')}
+      <form onsubmit="Actions.submitClient(event, ${c?`'${id}'`:'null'})">
+        <div class="field"><label>Nome *</label><input name="name" required maxlength="80" value="${c?Utils.esc(c.name):''}" placeholder="Nome completo"></div>
+        <div class="field"><label>Telefone</label><input name="phone" maxlength="30" value="${c?Utils.esc(c.phone):''}" placeholder="(00) 00000-0000"></div>
+        <div class="field"><label>Aniversário</label><input type="date" name="birthday" value="${c?c.birthday:''}"></div>
+        <div class="field"><label>Observações</label><textarea name="notes" maxlength="500" placeholder="Preferências, alergias, observações...">${c?Utils.esc(c.notes):''}</textarea></div>
+        <button class="btn" type="submit">${c?'Salvar alterações':'Cadastrar cliente'}</button>
+      </form>`);
+  },
+
+  openAppointment(id, presetClientId){
+    const a = id ? State.data.appointments.find(x=>x.id===id) : null;
+    if(!State.data.clients.length){
+      this.open(`${this.head('Novo atendimento')}<div class="empty"><b>Nenhum cliente cadastrado</b>Cadastre um cliente antes de criar um atendimento.</div>
+      <button class="btn" style="margin-top:12px;" onclick="Modals.close(); Modals.openClient();">Cadastrar cliente</button>`);
+      return;
+    }
+    const clientId = a? a.clientId : (presetClientId||'');
+    this.open(`${this.head(a? 'Editar atendimento':'Novo atendimento')}
+      <form onsubmit="Actions.submitAppointment(event, ${a?`'${id}'`:'null'})">
+        <div class="field"><label>Cliente *</label><select name="clientId" required>${this.clientOptions(clientId)}</select></div>
+        <div class="field"><label>Serviço</label><select name="serviceId" onchange="Modals.fillServiceDefaults(this)">${'<option value="">Selecionar…</option>'+this.serviceOptions(a?a.serviceId:'')}</select></div>
+        <div class="field-row">
+          <div class="field"><label>Data *</label><input type="date" name="date" required value="${a?a.date:Utils.todayISO()}"></div>
+          <div class="field"><label>Horário *</label><input type="time" name="time" required value="${a?a.time:'09:00'}"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Duração (min)</label><input type="number" name="duration" min="5" max="600" value="${a?a.duration:30}"></div>
+          <div class="field"><label>Valor (R$)</label><input type="number" name="price" min="0" step="0.01" value="${a?a.price:0}"></div>
+        </div>
+        <div class="field"><label>Observações</label><textarea name="notes" maxlength="500">${a?Utils.esc(a.notes):''}</textarea></div>
+        <button class="btn" type="submit">${a?'Salvar alterações':'Criar atendimento'}</button>
+      </form>`);
+  },
+  fillServiceDefaults(sel){
+    const svc = State.data.services.find(s=>s.id===sel.value);
+    if(!svc) return;
+    const form = sel.closest('form');
+    form.duration.value = svc.duration;
+    form.price.value = svc.price;
+  },
+
+  openReturn(id, presetClientId){
+    if(!State.data.clients.length){
+      this.open(`${this.head('Novo retorno')}<div class="empty"><b>Nenhum cliente cadastrado</b>Cadastre um cliente antes de criar um retorno.</div>`);
+      return;
+    }
+    const r = id ? State.data.returns.find(x=>x.id===id) : null;
+    this.open(`${this.head(r?'Editar retorno':'Novo retorno')}
+      <form onsubmit="Actions.submitReturn(event)">
+        <div class="field"><label>Cliente *</label><select name="clientId" required>${this.clientOptions(r?r.clientId:presetClientId)}</select></div>
+        <div class="field-row">
+          <div class="field"><label>Data *</label><input type="date" name="date" required value="${r?r.date:Utils.todayISO()}"></div>
+          <div class="field"><label>Horário</label><input type="time" name="time" value="${r?r.time:''}"></div>
+        </div>
+        <div class="field"><label>Motivo</label><input name="reason" maxlength="200" value="${r?Utils.esc(r.reason):''}" placeholder="Ex: reavaliar tratamento"></div>
+        <div class="field"><label>Lembrete</label>
+          <div class="radio-group" id="reminderGroup">
+            ${['24h','1h','24h+1h','none'].map(v=>{
+              const label = {'24h':'24h antes','1h':'1h antes','24h+1h':'24h + 1h','none':'Sem lembrete'}[v];
+              const active = (r? r.reminder : State.data.settings.defaultReminder) === v;
+              return `<button type="button" class="radio-chip ${active?'active':''}" data-val="${v}" onclick="Modals.pickReminder(this)">${label}</button>`;
+            }).join('')}
+          </div>
+          <input type="hidden" name="reminder" value="${r? r.reminder : State.data.settings.defaultReminder}">
+        </div>
+        <button class="btn" type="submit">${r?'Salvar':'Criar retorno'}</button>
+      </form>`);
+  },
+  pickReminder(btn){
+    const group = btn.closest('.field');
+    group.querySelectorAll('.radio-chip').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    group.querySelector('input[name="reminder"]').value = btn.dataset.val;
+  },
+
+  openTransaction(type){
+    this.open(`${this.head(type==='receita'?'Nova receita':'Nova despesa')}
+      <form onsubmit="Actions.submitTransaction(event,'${type}')">
+        <div class="field"><label>Descrição *</label><input name="description" required maxlength="120" placeholder="Ex: ${type==='receita'?'Pacote de serviços':'Compra de produtos'}"></div>
+        <div class="field-row">
+          <div class="field"><label>Valor (R$) *</label><input type="number" name="value" required min="0.01" step="0.01"></div>
+          <div class="field"><label>Data *</label><input type="date" name="date" required value="${Utils.todayISO()}"></div>
+        </div>
+        <div class="field"><label>Categoria</label><input name="category" maxlength="60" placeholder="Geral"></div>
+        <button class="btn" type="submit">Salvar ${type}</button>
+      </form>`);
+  },
+
+  openService(id){
+    const s = id ? State.data.services.find(x=>x.id===id) : null;
+    this.open(`${this.head(s?'Editar serviço':'Novo serviço')}
+      <form onsubmit="Actions.submitService(event, ${s?`'${id}'`:'null'})">
+        <div class="field"><label>Nome *</label><input name="name" required maxlength="60" value="${s?Utils.esc(s.name):''}"></div>
+        <div class="field-row">
+          <div class="field"><label>Duração (min) *</label><input type="number" name="duration" required min="5" max="600" value="${s?s.duration:30}"></div>
+          <div class="field"><label>Preço (R$) *</label><input type="number" name="price" required min="0" step="0.01" value="${s?s.price:0}"></div>
+        </div>
+        <button class="btn" type="submit">${s?'Salvar':'Cadastrar serviço'}</button>
+      </form>`);
+  },
+
+  openChangePassword(){
+    this.open(`${this.head('Alterar senha')}
+      <form onsubmit="Actions.submitChangePassword(event)">
+        <div class="field"><label>Nova senha</label><input type="password" name="pass1" required minlength="6"></div>
+        <div class="field"><label>Confirmar nova senha</label><input type="password" name="pass2" required minlength="6"></div>
+        <button class="btn" type="submit">Salvar nova senha</button>
+      </form>`);
+  },
+
+  confirm(title, message, onConfirm){
+    this.open(`${this.head(title)}<p style="color:var(--muted); font-size:14px; line-height:1.5;">${message}</p>
+      <div class="btn-row">
+        <button class="btn secondary" onclick="Modals.close()">Cancelar</button>
+        <button class="btn danger" id="confirmBtn">Confirmar</button>
+      </div>`);
+    document.getElementById('confirmBtn').onclick = ()=>{ onConfirm(); Modals.close(); };
+  }
+};
+
+/* ---------------------------- ACTIONS (mutações + regras de UI) ---------------------------- */
+let SAVING = false; // trava simples anti-duplo-clique em submits
+function withLock(fn){
+  if(SAVING) return;
+  SAVING = true;
+  try{ fn(); } finally { setTimeout(()=>SAVING=false, 300); }
+}
+async function withLockAsync(fn){
+  if(SAVING) return;
+  SAVING = true;
+  try{ await fn(); } finally { setTimeout(()=>SAVING=false, 300); }
+}
+
+const Actions = {
+  async submitClient(ev, id){
+    ev.preventDefault();
+    await withLockAsync(async ()=>{
+      const f = ev.target;
+      const name = f.name.value.trim();
+      if(!name){ Toast.show('Informe o nome do cliente.'); return; }
+      const payload = {name, phone:f.phone.value, birthday:f.birthday.value||null, notes:f.notes.value};
+      try{
+        if(id) await Repo.updateClient(id, payload); else await Repo.addClient(payload);
+        Modals.close();
+        Toast.show(id? 'Cliente atualizado.' : 'Cliente cadastrado.');
+        Render.refreshCurrent();
+      }catch(e){ console.error(e); Toast.show('Não foi possível salvar. Verifique sua internet e tente novamente.'); }
+    });
+  },
+  async submitAppointment(ev, id){
+    ev.preventDefault();
+    await withLockAsync(async ()=>{
+      const f = ev.target;
+      if(!f.clientId.value){ Toast.show('Selecione um cliente.'); return; }
+      if(!f.date.value || !f.time.value){ Toast.show('Informe data e horário.'); return; }
+      const payload = {
+        clientId:f.clientId.value, serviceId:f.serviceId.value||null, date:f.date.value, time:f.time.value,
+        duration:f.duration.value, price:f.price.value, notes:f.notes.value
+      };
+      try{
+        if(id) await Repo.updateAppointment(id, payload); else await Repo.addAppointment(payload);
+        Modals.close();
+        Toast.show(id? 'Atendimento atualizado.' : 'Atendimento criado.');
+        Render.refreshCurrent();
+      }catch(e){ console.error(e); Toast.show('Não foi possível salvar. Verifique sua internet e tente novamente.'); }
+    });
+  },
+  async submitReturn(ev){
+    ev.preventDefault();
+    await withLockAsync(async ()=>{
+      const f = ev.target;
+      if(!f.clientId.value){ Toast.show('Selecione um cliente.'); return; }
+      if(!f.date.value){ Toast.show('Informe a data do retorno.'); return; }
+      try{
+        await Repo.addReturn({clientId:f.clientId.value, date:f.date.value, time:f.time.value, reason:f.reason.value, reminder:f.reminder.value});
+        Modals.close();
+        Toast.show('Retorno criado.');
+        Render.refreshCurrent();
+      }catch(e){ console.error(e); Toast.show('Não foi possível salvar. Verifique sua internet e tente novamente.'); }
+    });
+  },
+  async submitTransaction(ev, type){
+    ev.preventDefault();
+    await withLockAsync(async ()=>{
+      const f = ev.target;
+      const value = Number(f.value.value);
+      if(!f.description.value.trim()){ Toast.show('Informe uma descrição.'); return; }
+      if(!value || value<=0){ Toast.show('Informe um valor válido.'); return; }
+      try{
+        await Repo.addTransaction({type, description:f.description.value, value, date:f.date.value, category:f.category.value||'Geral'});
+        Modals.close();
+        Toast.show(type==='receita'?'Receita registrada.':'Despesa registrada.');
+        Render.refreshCurrent();
+      }catch(e){
+        console.error(e);
+        Toast.show('Não foi possível salvar. Se o problema persistir, confirme se seu plano inclui o Financeiro.');
+      }
+    });
+  },
+  async submitService(ev, id){
+    ev.preventDefault();
+    await withLockAsync(async ()=>{
+      const f = ev.target;
+      if(!f.name.value.trim()){ Toast.show('Informe o nome do serviço.'); return; }
+      const payload = {name:f.name.value, duration:f.duration.value, price:f.price.value};
+      try{
+        if(id) await Repo.updateService(id, payload); else await Repo.addService(payload);
+        Modals.close();
+        Toast.show('Serviço salvo.');
+        Render.refreshCurrent();
+      }catch(e){ console.error(e); Toast.show('Não foi possível salvar. Verifique sua internet e tente novamente.'); }
+    });
+  },
+
+  async confirmAppt(id){
+    try{ await Repo.setAppointmentStatus(id,'confirmado'); Toast.show('Atendimento confirmado.'); Render.refreshCurrent(); }
+    catch(e){ Toast.show('Não foi possível sincronizar. Tente novamente.'); }
+  },
+  async completeAppt(id){
+    try{ await Repo.setAppointmentStatus(id,'concluido'); Toast.show('Atendimento concluído.'); Render.refreshCurrent(); }
+    catch(e){ Toast.show('Não foi possível sincronizar. Tente novamente.'); }
+  },
+  async noshowAppt(id){
+    try{ await Repo.setAppointmentStatus(id,'no-show'); Toast.show('Marcado como não comparecimento.'); Render.refreshCurrent(); }
+    catch(e){ Toast.show('Não foi possível sincronizar. Tente novamente.'); }
+  },
+  cancelAppt(id){
+    Modals.confirm('Cancelar atendimento', 'Tem certeza que deseja cancelar este atendimento?', async ()=>{
+      try{ await Repo.setAppointmentStatus(id,'cancelado'); Toast.show('Atendimento cancelado.'); Render.refreshCurrent(); }
+      catch(e){ Toast.show('Não foi possível sincronizar. Tente novamente.'); }
+    });
+  },
+  async completeReturn(id){
+    try{ await Repo.markReturnDone(id); Toast.show('Retorno concluído.'); Render.refreshCurrent(); }
+    catch(e){ Toast.show('Não foi possível sincronizar. Tente novamente.'); }
+  },
+  deleteReturnConfirm(id){
+    Modals.confirm('Remover retorno', 'Deseja remover este retorno? Essa ação não pode ser desfeita.', async ()=>{
+      try{ await Repo.deleteReturn(id); Toast.show('Retorno removido.'); Render.refreshCurrent(); }
+      catch(e){ Toast.show('Não foi possível remover. Tente novamente.'); }
+    });
+  },
+  deleteServiceConfirm(id){
+    Modals.confirm('Remover serviço', 'Deseja remover este serviço?', async ()=>{
+      try{ await Repo.deleteService(id); Toast.show('Serviço removido.'); Render.refreshCurrent(); }
+      catch(e){ Toast.show('Não foi possível remover. Tente novamente.'); }
+    });
+  },
+  deleteTransactionConfirm(id){
+    Modals.confirm('Remover lançamento', 'Deseja remover este lançamento financeiro?', async ()=>{
+      try{ await Repo.deleteTransaction(id); Toast.show('Lançamento removido.'); Render.refreshCurrent(); }
+      catch(e){ Toast.show('Não foi possível remover. Tente novamente.'); }
+    });
+  },
+  dismiss(id){
+    EventEngine.dismiss(id);
+    Render.refreshCurrent();
+    CurrentUser.savePreferences(); // sincroniza "visto" entre dispositivos (melhor esforço)
+  },
+
+  toggleSetting(key){
+    State.data.settings[key] = !State.data.settings[key];
+    State.saveCache();
+    Render.refreshCurrent();
+    CurrentUser.savePreferences();
+  },
+  toggleAppointmentNotifications(){
+    State.data.settings.notifAppointment = State.data.settings.notifAppointment === false;
+    State.saveCache();
+    Render.refreshCurrent();
+    CurrentUser.savePreferences();
+    if(State.data.settings.notifAppointment) AppointmentReminderEngine.check();
+  },
+  toggleAppointmentReminder(v){
+    const current = Array.isArray(State.data.settings.appointmentReminders) ? [...State.data.settings.appointmentReminders] : [];
+    const i = current.indexOf(v);
+    if(i >= 0){
+      current.splice(i,1);
+    }else{
+      if(current.length >= 2){
+        Toast.show('Você pode escolher no máximo 2 avisos.');
+        return;
+      }
+      current.push(v);
+    }
+    const order = ['24h','12h','6h','2h'];
+    current.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+    State.data.settings.appointmentReminders = current;
+    State.saveCache();
+    Render.refreshCurrent();
+    CurrentUser.savePreferences();
+    AppointmentReminderEngine.check();
+  },
+  setDefaultReminder(v){
+    State.data.settings.defaultReminder = v;
+    State.saveCache();
+    Render.refreshCurrent();
+    CurrentUser.savePreferences();
+  },
+  logout(){
+    Modals.confirm('Sair da conta', 'Deseja sair da sua conta neste dispositivo?', async ()=>{
+      DataSync.unsubscribeAll();
+      AppointmentReminderEngine.stop();
+      await CurrentUser.logout();
+      State.clearCache();
+      Boot.route();
+    });
+  },
+  async startCheckout(planId, gateway){
+    Toast.show('Abrindo checkout...');
+    try{
+      const {data:{session}} = await sb.auth.getSession();
+      const res = await fetch(`${SUPABASE_CONFIG.url}/functions/v1/create-checkout`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json', 'Authorization':`Bearer ${session?.access_token||''}`},
+        body: JSON.stringify({planId, gateway})
+      });
+      const out = await res.json();
+      if(!res.ok || out.error){
+        if(out.error === 'gateway_not_configured'){
+          Toast.show('Este gateway de pagamento ainda não foi configurado pelo administrador do sistema.');
+        } else {
+          Toast.show('Não foi possível iniciar o checkout: ' + (out.detail || out.error || 'erro desconhecido'));
+        }
+        return;
+      }
+      window.location.href = out.checkoutUrl;
+    }catch(e){
+      console.error(e);
+      Toast.show('Não foi possível conectar ao servidor de pagamentos agora.');
+    }
+  },
+  submitChangePassword(ev){
+    ev.preventDefault();
+    withLockAsync(async ()=>{
+      const f = ev.target;
+      if(f.pass1.value !== f.pass2.value){ Toast.show('As senhas não coincidem.'); return; }
+      if(f.pass1.value.length < 6){ Toast.show('Use pelo menos 6 caracteres.'); return; }
+      const {error} = await sb.auth.updateUser({password: f.pass1.value});
+      if(error){ Toast.show('Não foi possível alterar a senha: '+error.message); return; }
+      Modals.close();
+      Toast.show('Senha alterada com sucesso.');
+    });
+  },
+
+  exportData(){
+    const blob = new Blob([JSON.stringify(State.data, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'ativvo-dados.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+    Toast.show('Exportação iniciada.');
+  },
+  wipeDataConfirm(){
+    Modals.confirm('Apagar meu cache local', 'Isso limpa apenas a cópia local (cache) deste navegador. Seus dados de verdade continuam salvos no servidor e serão baixados novamente no próximo carregamento. Continuar?', async ()=>{
+      State.clearCache();
+      Toast.show('Cache local apagado. Recarregando seus dados do servidor...');
+      await DataSync.hydrate();
+      Render.maisView='menu';
+      Boot.route();
+    });
+  }
+};
+
+/* ---------------------------- AVISOS DE ATENDIMENTO ---------------------------- */
+const AppointmentReminderEngine = {
+  timer: null,
+  start(){
+    this.stop();
+    this.check();
+    this.timer = setInterval(()=>this.check(), 30000);
+  },
+  stop(){
+    if(this.timer){ clearInterval(this.timer); this.timer = null; }
+  },
+  check(){
+    if(!State.data || !Array.isArray(State.data.appointments)) return;
+    if(State.data.settings?.notifAppointment === false) return;
+    const selected = Array.isArray(State.data.settings?.appointmentReminders) ? State.data.settings.appointmentReminders : [];
+    if(!selected.length) return;
+    if(!State.data.appointmentReminderSeen || typeof State.data.appointmentReminderSeen !== 'object') State.data.appointmentReminderSeen = {};
+    const now = Date.now();
+    const hours = {'24h':24,'12h':12,'6h':6,'2h':2};
+    const labels = {'24h':'24 horas','12h':'12 horas','6h':'6 horas','2h':'2 horas'};
+    let changed = false;
+    State.data.appointments.forEach(a=>{
+      if(!['agendado','confirmado'].includes(a.status) || !a.date || !a.time) return;
+      const when = new Date(`${a.date}T${a.time}`);
+      if(Number.isNaN(when.getTime()) || when.getTime() <= now) return;
+      const remaining = when.getTime() - now;
+      selected.forEach(v=>{
+        const target = hours[v] * 60 * 60 * 1000;
+        if(remaining <= target && remaining > 0){
+          const key = `${a.id}|${a.date}|${a.time}|${v}`;
+          if(State.data.appointmentReminderSeen[key]) return;
+          const client = Repo.getClient(a.clientId);
+          const service = State.data.services.find(s=>s.id===a.serviceId);
+          Toast.show(`🔔 Você tem um atendimento daqui a ${labels[v]}. ${client?client.name:'Cliente'}${service?' · '+service.name:''} às ${a.time}.`);
+          State.data.appointmentReminderSeen[key] = true;
+          changed = true;
+        }
+      });
+    });
+    if(changed) State.saveCache();
+  }
+};
+
+/* ---------------------------- NOTIFICAÇÕES (painel) ---------------------------- */
+const Notif = {
+  open(){
+    const attention = EventEngine.attention();
+    const opportunities = EventEngine.opportunities();
+    const items = [...attention, ...opportunities];
+    document.getElementById('notifPanel').innerHTML = `
+      <div class="modal-head"><h3>Notificações</h3><button class="modal-close" onclick="Notif.close()">✕</button></div>
+      ${items.length? `<div class="list">${items.map(i=>`
+        <div class="item ${attention.includes(i)?'attention-item':'opportunity'}">
+          <div class="who" style="font-size:13.5px;">${Utils.esc(i.title)}</div>
+          <div class="meta">${Utils.esc(i.detail)}</div>
+          <div class="actions"><button onclick="Actions.dismiss('${i.id}'); Notif.open();">Marcar como lida</button></div>
+        </div>`).join('')}</div>` : `<div class="empty">Nenhuma notificação por aqui.</div>`}
+    `;
+    document.getElementById('notifPanel').classList.add('open');
+    document.getElementById('notifScrim').classList.add('open');
+  },
+  close(){
+    document.getElementById('notifPanel').classList.remove('open');
+    document.getElementById('notifScrim').classList.remove('open');
+  }
+};
+
+/* ---------------------------- ACCESS GATE (tela de acesso do assinante) ----------------------------
+   Portão de entrada do app do profissional. Confere o e-mail contra a lista de
+   assinantes cadastrada pelo administrador. Isso roda inteiramente no
+   navegador do próprio usuário (sem servidor), então serve como controle de
+   uso combinado dentro da equipe — não é uma barreira de segurança real, já
+   que os dados ficam no localStorage do próprio dispositivo. */
+const AccessGate = {
+  mode: 'login',   // 'login' | 'signup' | 'forgot' | 'reset'
+  error: '',
+  info: '',
+
+  mount(){
+    document.getElementById('clientAppRoot').style.display = 'none';
+    document.getElementById('bottomNav').style.display = 'none';
+    document.getElementById('adminRoot').style.display = 'none';
+    const root = document.getElementById('accessGateRoot');
+    root.style.display = 'block';
+    this.render(root);
+  },
+
+  render(root){
+    root = root || document.getElementById('accessGateRoot');
+
+    if(!isSupabaseConfigured()){
+      root.innerHTML = `
+        <div class="gate-screen"><div class="gate-card card">
+          <div class="mark-lg">A</div>
+          <h2>Configuração pendente</h2>
+          <div class="sub">Seu negócio sempre em movimento</div>
+          <div class="gate-msg warn">Este ATIVVO ainda não está ligado a um projeto Supabase. Preencha <code>SUPABASE_CONFIG.url</code> e <code>SUPABASE_CONFIG.anonKey</code> no topo do arquivo (ou nas variáveis de configuração do seu deploy) e rode o script <code>supabase/schema.sql</code> no seu projeto.</div>
+          <div class="disclosure">Veja o passo a passo completo em ATIVVO-SAAS-README.md, entregue junto com este arquivo.</div>
+        </div></div>`;
+      return;
+    }
+
+    if(!CurrentUser.profile && CurrentUser.session && Access.reason()==='no_profile'){
+      root.innerHTML = `<div class="gate-screen"><div class="gate-card card">
+        <div class="mark-lg">A</div><h2>Preparando sua conta…</h2>
+        <div class="sub">Isso deve levar só um instante.</div>
+      </div></div>`;
+      return;
+    }
+
+    if(Access.reason()==='blocked'){
+      root.innerHTML = `<div class="gate-screen"><div class="gate-card card">
+        <div class="mark-lg">A</div>
+        <h2>Acesso bloqueado</h2>
+        <div class="gate-msg error">${CurrentUser.profile.blocked_reason ? Utils.esc(CurrentUser.profile.blocked_reason) : 'Sua conta foi bloqueada pelo administrador do ATIVVO.'} Entre em contato para regularizar o acesso.</div>
+        <button class="btn secondary" onclick="Actions.logout()">Sair</button>
+      </div></div>`;
+      return;
+    }
+
+    let msgHtml = '';
+    if(this.error) msgHtml = `<div class="gate-msg error">${Utils.esc(this.error)}</div>`;
+    else if(this.info) msgHtml = `<div class="gate-msg warn">${Utils.esc(this.info)}</div>`;
+
+    if(this.mode === 'reset'){
+      root.innerHTML = `<div class="gate-screen"><div class="gate-card card">
+        <div class="mark-lg">A</div><h2>Definir nova senha</h2>
+        <div class="sub">Você chegou aqui pelo link de recuperação de senha</div>
+        ${msgHtml}
+        <form onsubmit="AccessGate.submitReset(event)">
+          <div class="field"><label>Nova senha</label><input type="password" name="pass1" required minlength="6"></div>
+          <div class="field"><label>Confirmar nova senha</label><input type="password" name="pass2" required minlength="6"></div>
+          <button class="btn" type="submit">Salvar e entrar</button>
+        </form>
+      </div></div>`;
+      return;
+    }
+
+    if(this.mode === 'signup'){
+      root.innerHTML = `<div class="gate-screen"><div class="gate-card card">
+        <div class="mark-lg">A</div><h2>Criar conta no ATIVVO</h2>
+        <div class="sub">Seu negócio sempre em movimento</div>
+        ${msgHtml}
+        <form onsubmit="AccessGate.submitSignup(event)">
+          <div class="field"><label>Nome</label><input name="name" required maxlength="80"></div>
+          <div class="field"><label>E-mail</label><input type="email" name="email" required></div>
+          <div class="field"><label>Senha</label><input type="password" name="password" required minlength="6"></div>
+          <button class="btn" type="submit">Criar conta</button>
+        </form>
+        <div class="gate-footer">Já tem conta? <button onclick="AccessGate.setMode('login')">Entrar</button></div>
+      </div></div>`;
+      return;
+    }
+
+    if(this.mode === 'forgot'){
+      root.innerHTML = `<div class="gate-screen"><div class="gate-card card">
+        <div class="mark-lg">A</div><h2>Recuperar senha</h2>
+        <div class="sub">Enviaremos um link de redefinição por e-mail</div>
+        ${msgHtml}
+        <form onsubmit="AccessGate.submitForgot(event)">
+          <div class="field"><label>E-mail cadastrado</label><input type="email" name="email" required></div>
+          <button class="btn" type="submit">Enviar link</button>
+        </form>
+        <div class="gate-footer"><button onclick="AccessGate.setMode('login')">Voltar para o login</button></div>
+      </div></div>`;
+      return;
+    }
+
+    // mode === 'login'
+    root.innerHTML = `
+      <div class="gate-screen">
+        <div class="gate-card card">
+          <div class="mark-lg">A</div>
+          <h2>Entrar no ATIVVO</h2>
+          <div class="sub">Seu negócio sempre em movimento</div>
+          ${msgHtml}
+          <form onsubmit="AccessGate.submitLogin(event)">
+            <div class="field"><label>E-mail</label><input type="email" name="email" required placeholder="voce@exemplo.com"></div>
+            <div class="field"><label>Senha</label><input type="password" name="password" required></div>
+            <button class="btn" type="submit">Entrar</button>
+          </form>
+          <div class="gate-footer">
+            <button onclick="AccessGate.setMode('forgot')">Esqueci minha senha</button> ·
+            <button onclick="AccessGate.setMode('signup')">Criar conta</button> ·
+            <button onclick="location.hash='#admin'">Sou administrador</button>
+          </div>
+          <div class="disclosure">Autenticação real via Supabase Auth: sua senha nunca é vista nem guardada por este app — o Supabase cuida do hash e da sessão. Seus dados ficam isolados dos de outros profissionais por políticas de segurança no banco (RLS).</div>
+        </div>
+      </div>`;
+  },
+
+  setMode(m){ this.mode = m; this.error=''; this.info=''; this.render(); },
+
+  async submitLogin(ev){
+    ev.preventDefault();
+    const f = ev.target;
+    this.error=''; this.info='';
+    const {error} = await sb.auth.signInWithPassword({email:f.email.value.trim(), password:f.password.value});
+    if(error){ this.error = traduzErroAuth(error); this.render(); return; }
+    await Boot.onSessionReady();
+  },
+
+  async submitSignup(ev){
+    ev.preventDefault();
+    const f = ev.target;
+    this.error=''; this.info='';
+    const {data, error} = await sb.auth.signUp({
+      email:f.email.value.trim(), password:f.password.value,
+      options:{ data:{ name:f.name.value.trim() } }
+    });
+    if(error){ this.error = traduzErroAuth(error); this.render(); return; }
+    if(data.session){
+      await Boot.onSessionReady();
+    } else {
+      this.mode='login';
+      this.info = 'Conta criada! Verifique seu e-mail para confirmar o cadastro antes de entrar.';
+      this.render();
+    }
+  },
+
+  async submitForgot(ev){
+    ev.preventDefault();
+    const f = ev.target;
+    const {error} = await sb.auth.resetPasswordForEmail(f.email.value.trim(), {
+      redirectTo: window.location.origin + window.location.pathname
+    });
+    this.mode='login';
+    this.info = error ? traduzErroAuth(error) : 'Se esse e-mail existir na nossa base, enviamos um link de recuperação.';
+    this.render();
+  },
+
+  async submitReset(ev){
+    ev.preventDefault();
+    const f = ev.target;
+    if(f.pass1.value !== f.pass2.value){ this.error='As senhas não coincidem.'; this.render(); return; }
+    const {error} = await sb.auth.updateUser({password:f.pass1.value});
+    if(error){ this.error = traduzErroAuth(error); this.render(); return; }
+    this.mode='login';
+    await Boot.onSessionReady();
+  }
+};
+
+function traduzErroAuth(error){
+  const msg = error?.message || '';
+  if(msg.includes('Invalid login credentials')) return 'E-mail ou senha incorretos.';
+  if(msg.includes('User already registered')) return 'Já existe uma conta com esse e-mail.';
+  if(msg.includes('Password should be at least')) return 'A senha precisa ter pelo menos 6 caracteres.';
+  if(msg.includes('Email not confirmed')) return 'Confirme seu e-mail antes de entrar (verifique sua caixa de entrada).';
+  return msg || 'Não foi possível completar a operação. Verifique sua internet e tente novamente.';
+}
+
+/* ---------------------------- ADMIN APP (painel administrativo do SaaS) ----------------------------
+   Login real (Supabase Auth) + verificação de pertencimento a admin_users.
+   Toda escrita passa pelas políticas de RLS do banco (schema.sql): mesmo que
+   alguém adultere este JavaScript no navegador, o Postgres só aceita as
+   operações administrativas se auth.uid() realmente estiver em admin_users.
+   Criar/excluir LOGIN de um usuário exige a service_role key — por isso
+   essas duas ações chamam Edge Functions (admin-create-user/admin-delete-user)
+   em vez de serem feitas direto daqui. */
+const AdminApp = {
+  tab: 'painel',
+  loginError: '',
+
+  async mount(){
+    document.getElementById('clientAppRoot').style.display = 'none';
+    document.getElementById('bottomNav').style.display = 'none';
+    document.getElementById('accessGateRoot').style.display = 'none';
+    const root = document.getElementById('adminRoot');
+    root.style.display = 'block';
+
+    if(!isSupabaseConfigured()){
+      root.innerHTML = `<div class="gate-screen"><div class="gate-card card">
+        <div class="mark-lg" style="background:linear-gradient(135deg,var(--warn),#ff9d4d);">A</div>
+        <h2>Configuração pendente</h2>
+        <div class="gate-msg warn">Configure SUPABASE_CONFIG (url/anonKey) e rode supabase/schema.sql antes de usar o painel administrativo.</div>
+      </div></div>`;
+      return;
+    }
+
+    await CurrentUser.refresh();
+    if(!CurrentUser.session){ this.renderLogin(root); return; }
+    if(!CurrentUser.isAdmin){
+      root.innerHTML = `<div class="gate-screen"><div class="gate-card card">
+        <div class="mark-lg" style="background:linear-gradient(135deg,var(--warn),#ff9d4d);">A</div>
+        <h2>Sem permissão de administrador</h2>
+        <div class="gate-msg error">A conta ${Utils.esc(CurrentUser.email())} está autenticada, mas não está cadastrada como administradora do ATIVVO.</div>
+        <div class="btn-row">
+          <button class="btn secondary" onclick="location.hash=''">Abrir o app</button>
+          <button class="btn danger" onclick="Actions.logout()">Sair</button>
+        </div>
+      </div></div>`;
+      return;
+    }
+    await this.renderShell(root);
+  },
+
+  renderLogin(root, error){
+    root.innerHTML = `
+      <div class="gate-screen">
+        <div class="gate-card card">
+          <div class="mark-lg" style="background:linear-gradient(135deg,var(--warn),#ff9d4d);">A</div>
+          <h2>Painel administrativo</h2>
+          <div class="sub">Acesso restrito ao administrador do ATIVVO</div>
+          ${error? `<div class="gate-msg error">${Utils.esc(error)}</div>` : ''}
+          <form onsubmit="AdminApp.login(event)">
+            <div class="field"><label>E-mail</label><input type="email" name="email" required autofocus></div>
+            <div class="field"><label>Senha</label><input type="password" name="password" required></div>
+            <button class="btn" type="submit">Entrar</button>
+          </form>
+          <div class="gate-footer"><button onclick="location.hash=''">Voltar para o app</button></div>
+          <div class="disclosure">Login real via Supabase Auth (mesma base de autenticação dos profissionais). O que concede privilégio de administrador é a conta estar cadastrada na tabela <code>admin_users</code> — veja o passo "criar primeiro admin" no README/schema.sql.</div>
+        </div>
+      </div>`;
+  },
+  async login(ev){
+    ev.preventDefault();
+    const f = ev.target;
+    const {error} = await sb.auth.signInWithPassword({email:f.email.value.trim(), password:f.password.value});
+    if(error){ this.renderLogin(document.getElementById('adminRoot'), traduzErroAuth(error)); return; }
+    this.tab = 'painel';
+    await this.mount();
+  },
+
+  async renderShell(root){
+    root.innerHTML = `
+      <div class="admin-topbar">
+        <div class="brand"><h1>ATIVVO <span class="tag">ADMIN</span></h1></div>
+        <div style="display:flex; gap:8px;">
+          <button class="iconbtn" onclick="location.hash=''" title="Abrir app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+          <button class="iconbtn" onclick="AdminApp.logout()" title="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button>
+        </div>
+      </div>
+      <div class="admin-main">
+        <div class="admin-tabs">
+          <button class="${this.tab==='painel'?'active':''}" onclick="AdminApp.tab='painel'; AdminApp.render();">Painel</button>
+          <button class="${this.tab==='usuarios'?'active':''}" onclick="AdminApp.tab='usuarios'; AdminApp.render();">Usuários</button>
+          <button class="${this.tab==='planos'?'active':''}" onclick="AdminApp.tab='planos'; AdminApp.render();">Planos</button>
+          <button class="${this.tab==='config'?'active':''}" onclick="AdminApp.tab='config'; AdminApp.render();">Configurações</button>
+        </div>
+        <div id="adminContent"><div class="empty">Carregando…</div></div>
+      </div>`;
+    await this.render();
+  },
+  async logout(){
+    await CurrentUser.logout();
+    location.hash='';
+    Boot.route();
+  },
+  async render(){
+    const el = document.getElementById('adminContent');
+    if(!el) return;
+    try{
+      if(this.tab==='painel') return await this.renderPainel(el);
+      if(this.tab==='usuarios') return await this.renderUsuarios(el);
+      if(this.tab==='planos') return await this.renderPlanos(el);
+      if(this.tab==='config') return this.renderConfig(el);
+    }catch(e){
+      console.error(e);
+      el.innerHTML = `<div class="empty"><b>Erro ao carregar</b>Verifique sua internet e as credenciais do Supabase, depois tente novamente.</div>`;
+    }
+  },
+
+  async renderPainel(el){
+    await AdminRepo.loadAll();
+    const k = AdminRepo.kpis();
+    el.innerHTML = `
+      <div class="kpi-grid">
+        <div class="stat-card"><div class="num">${k.total}</div><div class="lbl">Usuários</div></div>
+        <div class="stat-card accent"><div class="num">${k.ativos}</div><div class="lbl">Ativos</div></div>
+        <div class="stat-card warn"><div class="num">${k.bloqueados}</div><div class="lbl">Bloqueados</div></div>
+        <div class="stat-card"><div class="num">${k.pagantes}</div><div class="lbl">Assinantes pagos</div></div>
+      </div>
+      <div class="card">
+        <div class="hint">Receita mensal recorrente estimada (MRR)</div>
+        <div style="font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--primary); margin-top:4px;">${Utils.money(k.mrr)}</div>
+        <div class="hint" style="margin-top:6px;">Soma do valor efetivo (preço do plano ou preço personalizado, já com desconto) de assinantes com assinatura ativa/em teste e não vencida.</div>
+      </div>
+      <div class="disclosure" style="margin-top:16px;">MRR calculado a partir das tabelas <code>subscriptions</code>/<code>plans</code> no Postgres — reflete o que está registrado no banco, não uma simulação local. A confirmação de pagamento em si (tabela <code>payments</code>) só é gravada pelos webhooks do gateway (ver ATIVVO-SAAS-README.md); pagamento real ainda depende de você configurar Mercado Pago/Stripe.</div>
+    `;
+  },
+
+  userQuery: '',
+  userFilter: 'todos',
+  async renderUsuarios(el){
+    el.innerHTML = `<div class="empty">Carregando usuários…</div>`;
+    await AdminRepo.loadAll();
+    let list = AdminRepo.users.slice();
+    const q = this.userQuery.trim().toLowerCase();
+    if(q) list = list.filter(u=> (u.profile.name||'').toLowerCase().includes(q) || (u.profile.email||'').toLowerCase().includes(q));
+    if(this.userFilter==='ativos') list = list.filter(u=>!u.profile.blocked);
+    if(this.userFilter==='bloqueados') list = list.filter(u=>u.profile.blocked);
+    if(this.userFilter==='pagos') list = list.filter(u=>u.subscription && Access.effectivePrice(u.subscription,u.plan)>0);
+    if(this.userFilter==='gratuitos') list = list.filter(u=>!u.subscription || Access.effectivePrice(u.subscription,u.plan)===0);
+    list.sort((a,b)=>(a.profile.name||'').localeCompare(b.profile.name||''));
+
+    el.innerHTML = `
+      <div class="btn-row" style="margin-bottom:12px;">
+        <button class="btn" onclick="AdminApp.openUserForm()">+ Novo usuário</button>
+      </div>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input placeholder="Buscar por nome ou e-mail" value="${Utils.esc(this.userQuery)}" oninput="AdminApp.userQuery=this.value; AdminApp.render();">
+      </div>
+      <div class="tabs">
+        ${['todos','ativos','bloqueados','pagos','gratuitos'].map(f=>`<button class="${this.userFilter===f?'active':''}" onclick="AdminApp.userFilter='${f}'; AdminApp.render();">${f[0].toUpperCase()+f.slice(1)}</button>`).join('')}
+      </div>
+      <div class="table-list" style="margin-top:12px;">
+        ${list.length? list.map(u=>{
+          const price = u.subscription ? Access.effectivePrice(u.subscription, u.plan) : 0;
+          const blocked = u.profile.blocked;
+          return `<div class="trow">
+            <div class="row1">
+              <div>
+                <div class="name">${Utils.esc(u.profile.name||'(sem nome)')}</div>
+                <div class="sub">${Utils.esc(u.profile.email)} ${u.plan? '· '+Utils.esc(u.plan.name):''}</div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end;">
+                <span class="status-pill ${blocked?'bloqueado':'ativo'}">${blocked?'Bloqueado':'Ativo'}</span>
+                <span class="status-pill ${price>0?'pago':'gratuito'}">${price>0? Utils.money(price):'Gratuito'}</span>
+              </div>
+            </div>
+            ${u.subscription? `<div class="sub" style="margin-top:6px;">Assinatura: ${u.subscription.status} ${u.subscription.current_period_end? '· vence '+Utils.dateBR(u.subscription.current_period_end.slice(0,10)) : '· sem vencimento'}${u.subscription.discount_percent? ' · desconto '+u.subscription.discount_percent+'%':''}</div>`:''}
+            <div class="actions" style="margin-top:10px;">
+              <button onclick="AdminApp.openUserForm('${u.profile.user_id}')">Editar</button>
+              <button class="${!blocked?'danger':'primary'}" onclick="AdminApp.toggleBlock('${u.profile.user_id}', ${blocked})">${!blocked?'Bloquear':'Liberar acesso'}</button>
+              <button class="danger" onclick="AdminApp.deleteUserConfirm('${u.profile.user_id}')">Excluir</button>
+            </div>
+          </div>`;
+        }).join('') : `<div class="empty">Nenhum usuário encontrado.</div>`}
+      </div>
+    `;
+  },
+  openUserForm(userId){
+    const u = userId ? AdminRepo.users.find(x=>x.profile.user_id===userId) : null;
+    const plans = AdminRepo.plans.filter(p=>p.active);
+    const sub = u?.subscription, plan = u?.plan, profile = u?.profile;
+    const isPago = sub ? Access.effectivePrice(sub, plan) > 0 : false;
+    Modals.open(`${Modals.head(u? 'Editar usuário':'Novo usuário')}
+      <form onsubmit="AdminApp.submitUser(event, ${u?`'${userId}'`:'null'})">
+        <div class="field"><label>Nome *</label><input name="name" required maxlength="80" value="${u?Utils.esc(profile.name):''}"></div>
+        <div class="field"><label>E-mail *</label><input type="email" name="email" required maxlength="120" ${u?'readonly':''} value="${u?Utils.esc(profile.email):''}"></div>
+        ${u? '' : `<div class="field"><label>Senha inicial *</label><input type="password" name="password" required minlength="6" placeholder="A pessoa poderá trocar depois"></div>`}
+        <div class="field"><label>Telefone</label><input name="phone" maxlength="30" value="${u?Utils.esc(profile.phone||''):''}"></div>
+        ${u? `<div class="field"><label>Situação</label>
+          <div class="radio-group">
+            <button type="button" class="radio-chip ${!profile.blocked?'active':''}" data-val="ativo" onclick="AdminApp.pickChip(this,'status')">Ativo</button>
+            <button type="button" class="radio-chip ${profile.blocked?'active':''}" data-val="bloqueado" onclick="AdminApp.pickChip(this,'status')">Bloqueado</button>
+          </div>
+          <input type="hidden" name="status" value="${profile.blocked?'bloqueado':'ativo'}">
+        </div>` : ''}
+        <div class="field"><label>Tipo de acesso</label>
+          <div class="radio-group">
+            <button type="button" class="radio-chip ${!isPago?'active':''}" data-val="gratuito" onclick="AdminApp.pickChip(this,'accessType')">Gratuito</button>
+            <button type="button" class="radio-chip ${isPago?'active':''}" data-val="pago" onclick="AdminApp.pickChip(this,'accessType')">Pago</button>
+          </div>
+          <input type="hidden" name="accessType" value="${isPago?'pago':'gratuito'}">
+        </div>
+        <div class="field"><label>Plano</label><select name="planId">${plans.map(p=>`<option value="${p.id}" ${sub&&sub.plan_id===p.id?'selected':''}>${Utils.esc(p.name)} · ${Utils.money(p.price)}</option>`).join('')}</select></div>
+        <div class="field-row">
+          <div class="field"><label>Preço personalizado (R$)</label><input type="number" name="customPrice" min="0" step="0.01" placeholder="deixe vazio p/ usar o do plano" value="${sub&&sub.custom_price!=null?sub.custom_price:''}"></div>
+          <div class="field"><label>Desconto (%)</label><input type="number" name="discountPercent" min="0" max="100" value="${sub?sub.discount_percent:0}"></div>
+        </div>
+        <div class="field"><label>Motivo do desconto / condição especial</label><input name="discountReason" maxlength="160" value="${sub?Utils.esc(sub.discount_reason||''):''}" placeholder="Ex: parceria, plano promocional, cortesia"></div>
+        <div class="field"><label>Vencimento da assinatura (se pago)</label><input type="date" name="subscriptionEnd" value="${sub&&sub.current_period_end?sub.current_period_end.slice(0,10):''}"></div>
+        <button class="btn" type="submit">${u?'Salvar alterações':'Cadastrar usuário'}</button>
+      </form>`);
+  },
+  pickChip(btn, field){
+    const group = btn.closest('.field');
+    group.querySelectorAll('.radio-chip').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    group.querySelector(`input[name="${field}"]`).value = btn.dataset.val;
+  },
+  submitUser(ev, userId){
+    ev.preventDefault();
+    withLockAsync(async ()=>{
+      const f = ev.target;
+      if(!f.name.value.trim()){ Toast.show('Informe o nome.'); return; }
+      const gratuito = f.accessType.value === 'gratuito';
+      const customPrice = gratuito ? 0 : (f.customPrice.value===''? null : Number(f.customPrice.value));
+      const discountPercent = gratuito ? 0 : Number(f.discountPercent.value)||0;
+      try{
+        if(userId){
+          await AdminRepo.updateProfile(userId, {name:f.name.value.trim(), phone:f.phone.value, blocked: f.status.value==='bloqueado'});
+          await AdminRepo.updateSubscription(userId, {
+            plan_id:f.planId.value, custom_price:customPrice, discount_percent:discountPercent,
+            discount_reason:f.discountReason.value, current_period_end:f.subscriptionEnd.value||null
+          });
+          Toast.show('Usuário atualizado.');
+        } else {
+          if(!f.email.value.trim() || !f.password.value){ Toast.show('Informe e-mail e senha inicial.'); return; }
+          await AdminRepo.createUser({
+            name:f.name.value.trim(), email:f.email.value.trim(), password:f.password.value,
+            phone:f.phone.value, planId:f.planId.value, accessType:f.accessType.value,
+            discountPercent, discountReason:f.discountReason.value, subscriptionEnd:f.subscriptionEnd.value||null
+          });
+          Toast.show('Usuário cadastrado.');
+        }
+        Modals.close();
+        this.render();
+      }catch(e){
+        console.error(e);
+        Toast.show('Não foi possível salvar: ' + (e.message||'erro desconhecido'));
+      }
+    });
+  },
+  async toggleBlock(userId, currentlyBlocked){
+    try{ await AdminRepo.toggleBlock(userId, currentlyBlocked); Toast.show('Situação do usuário atualizada.'); this.render(); }
+    catch(e){ Toast.show('Não foi possível atualizar: '+e.message); }
+  },
+  deleteUserConfirm(userId){
+    Modals.confirm('Excluir usuário', 'Deseja excluir esse usuário definitivamente? Ele perderá o acesso ao app e todos os seus dados serão removidos.', async ()=>{
+      try{ await AdminRepo.deleteUser(userId); Toast.show('Usuário excluído.'); this.render(); }
+      catch(e){ Toast.show('Não foi possível excluir: '+e.message); }
+    });
+  },
+
+  async renderPlanos(el){
+    el.innerHTML = `<div class="empty">Carregando planos…</div>`;
+    await AdminRepo.loadAll();
+    el.innerHTML = `
+      <div class="btn-row" style="margin-bottom:12px;"><button class="btn" onclick="AdminApp.openPlanForm()">+ Novo plano</button></div>
+      <div class="table-list">
+        ${AdminRepo.plans.map(p=>{
+          const inUse = AdminRepo.users.filter(u=>u.subscription && u.subscription.plan_id===p.id).length;
+          return `<div class="trow">
+            <div class="row1">
+              <div><div class="name">${Utils.esc(p.name)} ${!p.active?'<span class="hint">(inativo)</span>':''}</div><div class="sub">${Utils.money(p.price)} / ${p.billing_period} · ${inUse} usuário(s)</div></div>
+              <span class="status-pill ${p.features&&p.features.financeiro?'pago':'gratuito'}">${p.features&&p.features.financeiro?'com financeiro':'sem financeiro'}</span>
+            </div>
+            ${p.description? `<div class="sub" style="margin-top:6px;">${Utils.esc(p.description)}</div>`:''}
+            <div class="actions" style="margin-top:10px;">
+              <button onclick="AdminApp.openPlanForm('${p.id}')">Editar</button>
+              <button onclick="AdminApp.togglePlanActive('${p.id}')">${p.active?'Desativar':'Ativar'}</button>
+              <button class="danger" onclick="AdminApp.deletePlanConfirm('${p.id}')">Excluir</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+  },
+  openPlanForm(id){
+    const p = id ? AdminRepo.plans.find(x=>x.id===id) : null;
+    Modals.open(`${Modals.head(p?'Editar plano':'Novo plano')}
+      <form onsubmit="AdminApp.submitPlan(event, ${p?`'${id}'`:'null'})">
+        <div class="field"><label>Nome *</label><input name="name" required maxlength="60" value="${p?Utils.esc(p.name):''}"></div>
+        <div class="field-row">
+          <div class="field"><label>Preço (R$) *</label><input type="number" name="price" required min="0" step="0.01" value="${p?p.price:0}"></div>
+          <div class="field"><label>Periodicidade</label>
+            <select name="billingPeriod">
+              <option value="mensal" ${p&&p.billing_period==='mensal'?'selected':''}>Mensal</option>
+              <option value="anual" ${p&&p.billing_period==='anual'?'selected':''}>Anual</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>Descrição</label><textarea name="description" maxlength="300">${p?Utils.esc(p.description):''}</textarea></div>
+        <div class="toggle-row" style="padding:4px 0;">
+          <div><div class="t-label">Inclui financeiro</div><div class="t-sub">Receitas, despesas e resultado do mês</div></div>
+          <button type="button" class="switch ${p&&p.features&&p.features.financeiro?'on':''}" id="financeiroSwitch" onclick="this.classList.toggle('on')"><span class="knob"></span></button>
+        </div>
+        <button class="btn" type="submit">${p?'Salvar':'Criar plano'}</button>
+      </form>`);
+  },
+  submitPlan(ev, id){
+    ev.preventDefault();
+    withLockAsync(async ()=>{
+      const f = ev.target;
+      if(!f.name.value.trim()){ Toast.show('Informe o nome do plano.'); return; }
+      const financeiro = document.getElementById('financeiroSwitch').classList.contains('on');
+      const payload = {name:f.name.value, price:f.price.value, billingPeriod:f.billingPeriod.value, description:f.description.value, financeiro};
+      try{
+        if(id) await AdminRepo.updatePlan(id, payload); else await AdminRepo.addPlan(payload);
+        Modals.close();
+        Toast.show('Plano salvo.');
+        this.render();
+      }catch(e){ Toast.show('Não foi possível salvar: '+e.message); }
+    });
+  },
+  async togglePlanActive(id){
+    try{ await AdminRepo.togglePlanActive(id); this.render(); }
+    catch(e){ Toast.show('Não foi possível atualizar: '+e.message); }
+  },
+  deletePlanConfirm(id){
+    Modals.confirm('Excluir plano', 'Deseja excluir este plano definitivamente?', async ()=>{
+      const res = await AdminRepo.deletePlan(id);
+      if(res.error==='in_use'){ Toast.show('Não é possível excluir: há usuários nesse plano. Migre-os para outro plano antes.'); return; }
+      if(res.error){ Toast.show('Não foi possível excluir: '+res.error); return; }
+      Toast.show('Plano excluído.'); this.render();
+    });
+  },
+
+  renderConfig(el){
+    el.innerHTML = `
+      <div class="card">
+        <div class="hint">Alterar a senha desta conta de administrador</div>
+        <form onsubmit="AdminApp.submitPassword(event)" style="margin-top:10px;">
+          <div class="field"><label>Nova senha</label><input type="password" name="pass1" required minlength="6"></div>
+          <div class="field"><label>Confirmar nova senha</label><input type="password" name="pass2" required minlength="6"></div>
+          <button class="btn" type="submit">Salvar nova senha</button>
+        </form>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="hint">Conta administradora atual</div>
+        <div style="font-weight:700; margin-top:4px;">${Utils.esc(CurrentUser.email())}</div>
+      </div>
+      <div class="disclosure" style="margin-top:16px;">Senha real gerenciada pelo Supabase Auth (hash seguro no servidor, nunca em texto simples). Para adicionar outro administrador, insira o <code>user_id</code> dele na tabela <code>admin_users</code> pelo SQL Editor do Supabase — por segurança, isso não é feito por aqui.</div>
+    `;
+  },
+  submitPassword(ev){
+    ev.preventDefault();
+    withLockAsync(async ()=>{
+      const f = ev.target;
+      if(f.pass1.value !== f.pass2.value){ Toast.show('As senhas não coincidem.'); return; }
+      const {error} = await sb.auth.updateUser({password:f.pass1.value});
+      if(error){ Toast.show('Não foi possível alterar: '+error.message); return; }
+      Toast.show('Senha atualizada.');
+      ev.target.reset();
+    });
+  }
+};
+
+/* ---------------------------- DATA SYNC (hidratação + tempo real) ----------------------------
+   Ao entrar, busca do Postgres tudo que pertence ao usuário autenticado e
+   preenche State.data (mesmo formato de sempre). Depois assina mudanças em
+   tempo real (Supabase Realtime) nas tabelas do profissional, então uma
+   alteração feita no celular aparece automaticamente no computador aberto
+   ao mesmo tempo, sem precisar recarregar a página. Requer que o Realtime
+   esteja habilitado para essas tabelas no painel do Supabase (ver README). */
+const DataSync = {
+  channels: [],
+  async hydrate(){
+    const uid = CurrentUser.uid();
+    if(!uid) return;
+    State.loadCacheOnly(); // mostra algo instantâneo enquanto a rede responde
+    try{
+      const [clientsRes, servicesRes, apptsRes, returnsRes, txRes] = await Promise.all([
+        sb.from('clients').select('*'),
+        sb.from('services').select('*').eq('active', true),
+        sb.from('appointments').select('*'),
+        sb.from('returns').select('*'),
+        sb.from('transactions').select('*')
+      ]);
+      const firstError = [clientsRes,servicesRes,apptsRes,returnsRes,txRes].find(r=>r.error)?.error;
+      if(firstError) throw firstError;
+
+      State.data.clients = clientsRes.data.map(Mapper.client.in);
+      State.data.services = servicesRes.data.map(Mapper.service.in);
+      State.data.appointments = apptsRes.data.map(Mapper.appointment.in);
+      State.data.returns = returnsRes.data.map(Mapper.ret.in);
+      State.data.transactions = txRes.data.map(Mapper.tx.in);
+
+      const prefs = (CurrentUser.profile && CurrentUser.profile.preferences) || {};
+      State.data.settings = Object.assign(State.emptyData().settings, prefs);
+      if(!Array.isArray(State.data.settings.appointmentReminders)) State.data.settings.appointmentReminders = [];
+      State.data.dismissed = Array.isArray(prefs.dismissed) ? prefs.dismissed : [];
+
+      State.saveCache();
+      this.subscribeRealtime(uid);
+      MigrationTool.checkAndOffer();
+    }catch(e){
+      console.error('Falha ao sincronizar com o servidor', e);
+      Toast.show('Não foi possível baixar seus dados agora. Mostrando a última cópia salva neste dispositivo.');
+    }
+  },
+  subscribeRealtime(uid){
+    this.unsubscribeAll();
+    const tables = [
+      {table:'clients', mapper:Mapper.client.in, key:'clients'},
+      {table:'appointments', mapper:Mapper.appointment.in, key:'appointments'},
+      {table:'returns', mapper:Mapper.ret.in, key:'returns'},
+      {table:'transactions', mapper:Mapper.tx.in, key:'transactions'},
+      {table:'services', mapper:Mapper.service.in, key:'services'}
+    ];
+    tables.forEach(({table, mapper, key})=>{
+      const channel = sb.channel(`realtime:${table}:${uid}`)
+        .on('postgres_changes', {event:'*', schema:'public', table, filter:`user_id=eq.${uid}`}, payload=>{
+          const arr = State.data[key];
+          if(payload.eventType === 'DELETE'){
+            State.data[key] = arr.filter(x=>x.id !== payload.old.id);
+          } else {
+            const mapped = mapper(payload.new);
+            const idx = arr.findIndex(x=>x.id===mapped.id);
+            if(idx>=0) arr[idx] = mapped; else arr.push(mapped);
+          }
+          State.saveCache();
+          Render.refreshCurrent();
+        })
+        .subscribe();
+      this.channels.push(channel);
+    });
+  },
+  unsubscribeAll(){
+    this.channels.forEach(ch=>sb.removeChannel(ch));
+    this.channels = [];
+  }
+};
+
+/* ---------------------------- MIGRAÇÃO DO LOCALSTORAGE (versão antiga) ----------------------------
+   O ATIVVO original (antes deste SaaS) guardava tudo em localStorage sob a
+   chave 'ativvo_data_v1'. Este módulo detecta esses dados, mostra quantos
+   registros existem e só envia ao Supabase depois de confirmação explícita
+   do profissional — nunca apaga o localStorage antigo sozinho: quem decide
+   apagar, depois de ver que a migração deu certo, é o próprio usuário (em
+   Mais > Meus dados). */
+const MigrationTool = {
+  LEGACY_KEY: 'ativvo_data_v1',
+  DONE_KEY: 'ativvo_migration_done',
+
+  hasLegacyData(){
+    if(localStorage.getItem(this.DONE_KEY) === '1') return false;
+    try{
+      const raw = localStorage.getItem(this.LEGACY_KEY);
+      if(!raw) return false;
+      const parsed = JSON.parse(raw);
+      const count = (parsed.clients||[]).length + (parsed.appointments||[]).length + (parsed.returns||[]).length + (parsed.transactions||[]).length;
+      return count > 0 ? parsed : false;
+    }catch(e){ return false; }
+  },
+  checkAndOffer(){
+    const legacy = this.hasLegacyData();
+    if(!legacy) return;
+    Modals.open(`${Modals.head('Dados antigos encontrados neste navegador')}
+      <p style="color:var(--muted); font-size:14px; line-height:1.6;">
+        Encontramos uma versão anterior do ATIVVO (armazenada só neste navegador) com
+        <b>${(legacy.clients||[]).length} cliente(s)</b>, <b>${(legacy.appointments||[]).length} atendimento(s)</b>,
+        ${(legacy.returns||[]).length} retorno(s) e ${(legacy.transactions||[]).length} lançamento(s) financeiro(s).
+        Deseja importar esses dados para a sua conta (${Utils.esc(CurrentUser.email())})? Nada será apagado
+        automaticamente — o backup antigo continua neste navegador até você decidir removê-lo.
+      </p>
+      <div class="btn-row">
+        <button class="btn secondary" onclick="Modals.close()">Agora não</button>
+        <button class="btn" onclick="MigrationTool.runImport()">Importar agora</button>
+      </div>`);
+  },
+  async runImport(){
+    const legacy = this.hasLegacyData();
+    if(!legacy){ Modals.close(); return; }
+    Modals.open(`${Modals.head('Importando…')}<div class="empty">Enviando seus dados para o servidor. Não feche esta janela.</div>`);
+    const idMap = {};
+    let ok = 0, fail = 0;
+    try{
+      for(const c of (legacy.clients||[])){
+        try{ const created = await Repo.addClient({name:c.name, phone:c.phone, birthday:c.birthday||null, notes:c.notes}); idMap[c.id] = created.id; ok++; }
+        catch(e){ fail++; }
+      }
+      const svcMap = {};
+      for(const s of (legacy.services||[])){
+        try{ const created = await Repo.addService({name:s.name, duration:s.duration, price:s.price}); svcMap[s.id] = created.id; ok++; }
+        catch(e){ fail++; }
+      }
+      for(const a of (legacy.appointments||[])){
+        if(!idMap[a.clientId]) { fail++; continue; }
+        try{
+          await Repo.addAppointment({
+            clientId:idMap[a.clientId], serviceId: a.serviceId? (svcMap[a.serviceId]||null) : null,
+            date:a.date, time:a.time, duration:a.duration, price:a.price, notes:a.notes
+          });
+          ok++;
+        }catch(e){ fail++; }
+      }
+      for(const r of (legacy.returns||[])){
+        if(!idMap[r.clientId]) { fail++; continue; }
+        try{ await Repo.addReturn({clientId:idMap[r.clientId], date:r.date, time:r.time, reason:r.reason, reminder:r.reminder}); ok++; }
+        catch(e){ fail++; }
+      }
+      for(const t of (legacy.transactions||[])){
+        try{ await Repo.addTransaction({type:t.type, description:t.description, value:t.value, date:t.date, category:t.category}); ok++; }
+        catch(e){ fail++; }
+      }
+
+      localStorage.setItem(this.DONE_KEY, '1');
+      Modals.close();
+      Toast.show(`Importação concluída: ${ok} registro(s) enviados${fail? `, ${fail} com falha (verifique manualmente)`:''}.`);
+      Render.refreshCurrent();
+    }catch(e){
+      console.error('Falha geral na migração', e);
+      Modals.close();
+      Toast.show('A importação foi interrompida por um erro de conexão. Você pode tentar novamente mais tarde — nada foi apagado.');
+    }
+  },
+  clearLegacyConfirm(){
+    if(!this.hasLegacyDataIgnoringDoneFlag()){ Toast.show('Não há dados antigos para remover.'); return; }
+    Modals.confirm('Remover backup antigo deste navegador', 'Isso apaga só a cópia antiga (pré-SaaS) guardada neste navegador. Só faça isso depois de confirmar que a importação funcionou. Continuar?', ()=>{
+      localStorage.removeItem(this.LEGACY_KEY);
+      Toast.show('Backup antigo removido deste navegador.');
+    });
+  },
+  hasLegacyDataIgnoringDoneFlag(){
+    try{ return !!localStorage.getItem(this.LEGACY_KEY); }catch(e){ return false; }
+  }
+};
+
+/* ---------------------------- BOOT / ROTEAMENTO ---------------------------- */
+const Boot = {
+  booting: false,
+  async init(){
+    window.addEventListener('hashchange', ()=>this.route());
+    if(!isSupabaseConfigured()){
+      this.route();
+      return;
+    }
+    // detecta o link de recuperação de senha (Supabase adiciona um hash como
+    // #access_token=...&type=recovery na URL de retorno do e-mail)
+    sb.auth.onAuthStateChange((event)=>{
+      if(event === 'PASSWORD_RECOVERY'){
+        AccessGate.mode = 'reset';
+        AccessGate.mount();
+      }
+    });
+    await this.onSessionReady();
+  },
+  async onSessionReady(){
+    if(this.booting) return;
+    this.booting = true;
+    try{
+      await CurrentUser.refresh();
+      if(CurrentUser.session && Access.isAllowed()){
+        await DataSync.hydrate();
+        AppointmentReminderEngine.start();
+      }
+    } finally {
+      this.booting = false;
+      this.route();
+    }
+  },
+  route(){
+    if(location.hash.startsWith('#admin')){
+      AdminApp.mount();
+      return;
+    }
+    if(!isSupabaseConfigured() || !CurrentUser.session || !Access.isAllowed()){
+      AccessGate.mount();
+      return;
+    }
+    document.getElementById('accessGateRoot').style.display = 'none';
+    document.getElementById('adminRoot').style.display = 'none';
+    document.getElementById('clientAppRoot').style.display = '';
+    document.getElementById('bottomNav').style.display = '';
+    Nav.go(Nav.current || 'hoje');
+  }
+};
+
+/* ---------------------------- INIT ---------------------------- */
+(function init(){
+  Boot.init();
+})();
+</script>
+</body>
+</html>
