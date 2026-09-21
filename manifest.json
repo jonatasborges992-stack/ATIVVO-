@@ -1,0 +1,14 @@
+{
+  "name": "ATIVVO — Seu negócio sempre em movimento",
+  "short_name": "ATIVVO",
+  "description": "ATIVVO — gestão simples para negócios de atendimento e recorrência.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0E1220",
+  "theme_color": "#0E1220",
+  "orientation": "portrait-primary",
+  "icons": [
+    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
