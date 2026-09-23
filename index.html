@@ -2002,7 +2002,8 @@ const AccessGate = {
   }
 };
 
-function traduzErroAuth(error){
+window.AccessGate = AccessGate;
+  function traduzErroAuth(error){
   const msg = error?.message || '';
   if(msg.includes('Invalid login credentials')) return 'E-mail ou senha incorretos.';
   if(msg.includes('User already registered')) return 'Já existe uma conta com esse e-mail.';
