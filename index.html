@@ -1966,16 +1966,44 @@ const AccessGate = {
     ev.preventDefault();
     const f = ev.target;
     this.error=''; this.info='';
-    const {data, error} = await sb.auth.signUp({
-      email:f.email.value.trim(), password:f.password.value,
-      options:{ data:{ name:f.name.value.trim() } }
-    });
-    if(error){ this.error = traduzErroAuth(error); this.render(); return; }
-    if(data.session){
-      await Boot.onSessionReady();
-    } else {
-      this.mode='login';
-      this.info = 'Conta criada! Verifique seu e-mail para confirmar o cadastro antes de entrar.';
+
+    try{
+      const {data, error} = await sb.auth.signUp({
+        email:f.email.value.trim(),
+        password:f.password.value,
+        options:{
+          data:{
+            name:f.name.value.trim()
+          }
+        }
+      });
+
+      if(error){
+        console.error('ATIVVO signup error:', error);
+        this.error = traduzErroAuth(error);
+        this.render();
+        return;
+      }
+
+      if(data.session){
+        await Boot.onSessionReady();
+      } else {
+        this.mode='login';
+        this.info = 'Conta criada! Verifique seu e-mail para confirmar o cadastro antes de entrar.';
+        this.render();
+      }
+
+    }catch(error){
+      console.error('ATIVVO signup exception:', error);
+
+      const details = [
+        error?.code,
+        error?.status,
+        error?.name,
+        error?.message
+      ].filter(Boolean).join(' · ');
+
+      this.error = details || 'Não foi possível concluir o cadastro. Verifique sua conexão e tente novamente.';
       this.render();
     }
   },
